@@ -1,8 +1,8 @@
 public class ImagenInmueble{
-    public int Id {get; set;}
-    public int InmuebleId {get; set;}
+    public int id_imagenInmueble {get; set;}
+    public int inmueble_id {get; set;}
     public string? url {get; set;}
-    public bool EsPortada {get; set;}
+    public bool esPortada {get; set;}
 
 
 }

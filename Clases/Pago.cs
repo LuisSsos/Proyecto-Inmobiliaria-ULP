@@ -1,9 +1,9 @@
 public class Pago
 {
-    public int Id {get; set;}
+    public int id_pago {get; set;}
     public int ReservaId {get; set;}
-    public string? Concepto {get; set;}
-    public DateTime FechaPago {get; set;}
+    public string? concepto {get; set;}
+    public DateTime fecha_pago {get; set;}
     public decimal importe {get; set;}
     public string estado {get; set;} = string.Empty;
 }

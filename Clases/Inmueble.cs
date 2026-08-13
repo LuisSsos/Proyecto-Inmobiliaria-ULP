@@ -1,10 +1,10 @@
 
 public class Inmueble{
-    public int Id {get; set;}
-    public int PropietarioId {get; set;}
-    public int TipoInmuebleId {get; set;}
-    public string Direccion {get; set;} = string.Empty;
-    public int Cupo {get; set;}
-    public decimal PrecioPorDia {get; set;}
-    public string Estado {get; set;} = string.Empty;
+    public int id_inmueble {get; set;}
+    public int propietarioId {get; set;}
+    public int tipoInmuebleId {get; set;}
+    public string direccion {get; set;} = string.Empty;
+    public int cupo {get; set;}
+    public decimal precioPorDia {get; set;}
+    public string estado {get; set;} = string.Empty;
 }

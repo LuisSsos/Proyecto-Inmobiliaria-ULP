@@ -1,7 +1,7 @@
 public class Propietario{
-    public int Id {get; set;}
-    public string Nombre {get; set;} = string.Empty;
-    public string DniCuit {get; set;} = string.Empty;
+    public int id_propietario {get; set;}
+    public string nombre_completo {get; set;} = string.Empty;
+    public string dniCuit {get; set;} = string.Empty;
     public string? email {get; set;}
 
 }

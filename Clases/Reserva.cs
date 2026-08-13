@@ -1,10 +1,10 @@
   public class Reserva {
-    public int Id {get; set;}
-     public int InquilinoId {get; set;}
-      public int InmuebleId {get; set;}
-       public DateTime FechaDesde {get; set;}
-        public DateTime FechaHasta { get; set; }
-        public decimal MontoPorDia {get; set;}
+    public int id_reserva {get; set;}
+     public int inquilino_id {get; set;}
+      public int inmueble_id {get; set;}
+       public DateTime fechaDesde {get; set;}
+        public DateTime fechaHasta { get; set; }
+        public decimal montoPorDia {get; set;}
          public string? estado {get; set;}
   }
   

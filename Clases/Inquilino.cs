@@ -1,6 +1,6 @@
 public class Inquilino{
-    public int Id {get; set;}
-    public string Dni {get; set;} = string.Empty;
-    public String NombreCompleto {get; set;} = string.Empty;
+    public int id_inquilino {get; set;}
+    public string dni {get; set;} = string.Empty;
+    public String nombreCompleto {get; set;} = string.Empty;
     
     }
