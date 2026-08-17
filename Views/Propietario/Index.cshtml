@@ -1,0 +1,25 @@
+@model List<MVC.Models.Propietario>
+
+<h2>Propietarios</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>DNI/CUIT</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var propietario in Model)
+        {
+            <tr>
+                <td>@propietario.id_propietario</td>
+                <td>@propietario.nombre_completo</td>
+                <td>@propietario.dniCuit</td>
+                <td>@propietario.email</td>
+            </tr>
+        }
+    </tbody>
+</table>
