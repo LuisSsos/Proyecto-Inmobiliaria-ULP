@@ -1,3 +1,3 @@
-# Proyecto-Inmobiliaria-Luis-Sosa
+# Proyecto-Inmobiliaria-ULP
 
 Para inicializarlo : dotnet run
