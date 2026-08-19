@@ -20,7 +20,7 @@ public class RepositorioPropietario
         using var connection = conexion.GetConnection();
         connection.Open();
 
-        var query = "SELECT id, nombre, dni_cuit, email FROM propietario";
+        var query = "SELECT id, nombre, dni_cuit, email, telefono FROM propietario";
         using var command = new MySqlCommand(query, connection);
         using var reader = command.ExecuteReader();
 
@@ -31,7 +31,8 @@ public class RepositorioPropietario
                 id_propietario = reader.GetInt32("id"),
                 nombre_completo = reader.GetString("nombre"),
                 dniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
-                email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString("email")
+                email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString("email"),
+                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString("telefono")
             };
             lista.Add(propietario);
         }

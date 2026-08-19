@@ -6,5 +6,7 @@ namespace MVC.Models
         public string nombre_completo { get; set; } = string.Empty;
         public string dniCuit { get; set; } = string.Empty;
         public string? email { get; set; }
+        public string? telefono { get; set; }
+
     }
 }
