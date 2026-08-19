@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<MVC.db.Conexion>();
 builder.Services.AddScoped<MVC.Repositories.RepositorioPropietario>();
+builder.Services.AddScoped<MVC.Repositories.RepositorioInquilino>();
 
 var app = builder.Build();
 

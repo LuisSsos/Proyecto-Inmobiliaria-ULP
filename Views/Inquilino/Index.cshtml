@@ -1,0 +1,27 @@
+@model List<MVC.Models.Inquilino>
+
+<h2>Inquilino</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Email</th>
+            <th>Telefono</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inquilino in Model)
+        {
+            <tr>
+                <td>@inquilino.id_inquilino</td>
+                <td>@inquilino.nombre_completo</td>
+                <td>@inquilino.dni</td>
+                <td>@inquilino.email</td>
+                <td>@inquilino.telefono</td>
+            </tr>
+        }
+    </tbody>
+</table>
