@@ -1,0 +1,30 @@
+@model MVC.Models.Propietario
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Eliminar Propietario</title>
+</head>
+<body>
+
+    <h2 class="alerta">¿Está seguro de que desea eliminar este propietario?</h2>
+    <hr />
+
+    <div>
+        <p><strong>ID:</strong> @Model.IdPropietario</p>
+        <p><strong>Nombre:</strong> @Model.Nombre</p>
+        <p><strong>DNI / CUIT:</strong> @Model.DniCuit</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Teléfono:</strong> @Model.Telefono</p>
+    </div>
+
+    <form asp-action="Eliminar" method="post">
+        <input type="hidden" name="IdPropietario" value="@Model.IdPropietario" />
+        <button type="submit">Confirmar Eliminación</button>
+        <a asp-action="Index">Cancelar</a>
+    </form>
+
+</body>
+</html>

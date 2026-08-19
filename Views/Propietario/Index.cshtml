@@ -1,27 +1,45 @@
 @model List<MVC.Models.Propietario>
+<!DOCTYPE html>
+<html>
 
-<h2>Propietarios</h2>
+<head>
+    <meta charset="utf-8" />
+    <title>Propietarios</title>
+</head>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>DNI/CUIT</th>
-            <th>Email</th>
-            <th>Telefono</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var propietario in Model)
-        {
+<body>
+    <h2>Propietarios</h2>
+    <p><!--El asp.action es un metodo para apuntar a cierto método del controlador-->
+        <a asp-action="Crear">+ Nuevo propietario</a>
+    </p>
+    <table border="1">
+        <thead>
             <tr>
-                <td>@propietario.id_propietario</td>
-                <td>@propietario.nombre_completo</td>
-                <td>@propietario.dniCuit</td>
-                <td>@propietario.email</td>
-                <td>@propietario.telefono</td>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>DNI/CUIT</th>
+                <th>Email</th>
+                <th>Telefono</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var propietario in Model)
+            {
+                <tr>
+                    <td>@propietario.IdPropietario</td>
+                    <td>@propietario.Nombre</td>
+                    <td>@propietario.DniCuit</td>
+                    <td>@propietario.Email</td>
+                    <td>@propietario.Telefono</td>
+                    
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@propietario.IdPropietario">Editar</a> |
+                        <a asp-action="Eliminar" asp-route-id="@propietario.IdPropietario">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+
+</html>

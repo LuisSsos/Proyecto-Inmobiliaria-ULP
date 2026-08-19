@@ -1,0 +1,40 @@
+@model MVC.Models.Propietario
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Crear Propietario</title>
+</head>
+<body>
+
+    <h2>Crear Nuevo Propietario</h2>
+    <hr />
+
+    <form asp-action="Crear" method="post">
+        <div class="campo">
+            <label>Nombre Completo</label>
+            <input type="text" name="Nombre" required />
+        </div>
+
+        <div class="campo">
+            <label>DNI / CUIT</label>
+            <input type="text" name="DniCuit" required />
+        </div>
+
+        <div class="campo">
+            <label>Email</label>
+            <input type="email" name="Email" />
+        </div>
+
+        <div class="campo">
+            <label>Teléfono</label>
+            <input type="text" name="Telefono" />
+        </div>
+
+        <button type="submit">Guardar</button>
+        <a asp-action="Index">Volver al listado</a>
+    </form>
+
+</body>
+</html>

@@ -2,11 +2,11 @@ namespace MVC.Models
 {
     public class Propietario
     {
-        public int id_propietario { get; set; }
-        public string nombre_completo { get; set; } = string.Empty;
-        public string dniCuit { get; set; } = string.Empty;
-        public string? email { get; set; }
-        public string? telefono { get; set; }
+        public int IdPropietario { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string DniCuit { get; set; } = string.Empty;
+        public string? Email { get; set; }
+        public string? Telefono { get; set; }
 
     }
 }
