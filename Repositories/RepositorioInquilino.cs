@@ -12,6 +12,7 @@ public class RepositorioInquilino
     {
         this.conexion = conexion;
     }
+
     //listar todos los inquilinos
     public List<Inquilino> ObtenerTodos()
     {
@@ -46,7 +47,7 @@ public class RepositorioInquilino
         using var connection = conexion.GetConnection();
         connection.Open();
 
-        var query = "SELECT id, nombre, dni, email, telefono FROM inquilino WHERE id = @id ";
+        var query = "SELECT id, nombre_completo, dni, email, telefono FROM inquilino WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", id);
@@ -58,7 +59,7 @@ public class RepositorioInquilino
             return new Inquilino
             {
                 id_inquilino = reader.GetInt32("id"),
-                nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
+                nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo")) ? "" : reader.GetString("nombre_completo"),
                 dni = reader.IsDBNull(reader.GetOrdinal("dni")) ? "" : reader.GetString("dni"),
                 email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
                 telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
@@ -74,7 +75,7 @@ public class RepositorioInquilino
         using var connection = conexion.GetConnection();
         connection.Open();
 
-        var query = "INSERT INTO inquilino (nombre, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono)";
+        var query = "INSERT INTO inquilino (nombre_completo, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono)";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -92,7 +93,7 @@ public class RepositorioInquilino
         using var connection = conexion.GetConnection();
         connection.Open();
 
-        var query = " UPDATE inquilino SET nombre = @nombre, dni = @dni, email = @email, telefono = @telefono WHERE id = @id";
+        var query = "UPDATE inquilino SET nombre_completo = @nombre, dni = @dni, email = @email, telefono = @telefono WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -103,10 +104,19 @@ public class RepositorioInquilino
         command.Parameters.AddWithValue("@telefono", (object?)inquilino.telefono ?? DBNull.Value);
 
         command.ExecuteNonQuery();
-
     }
 
+    // baja de inquilino
+    public void Eliminar(int id)
+    {
+        using var connection = conexion.GetConnection();
+        connection.Open();
 
+        var query = "DELETE FROM inquilino WHERE id = @id";
 
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        command.ExecuteNonQuery();
+    }
 }
-

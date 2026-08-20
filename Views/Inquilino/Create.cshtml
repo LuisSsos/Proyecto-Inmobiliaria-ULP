@@ -1,0 +1,23 @@
+@model MVC.Models.Inquilino
+
+<h2>Nuevo Inquilino</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Nombre completo</label>
+        <input asp-for="nombre_completo" />
+    </div>
+    <div>
+        <label>DNI</label>
+        <input asp-for="dni" />
+    </div>
+    <div>
+        <label>Email</label>
+        <input asp-for="email" />
+    </div>
+    <div>
+        <label>Teléfono</label>
+        <input asp-for="telefono" />
+    </div>
+    <button type="submit">Guardar</button>
+</form>
