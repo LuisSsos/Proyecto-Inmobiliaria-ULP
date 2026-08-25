@@ -8,7 +8,7 @@ public class PropietarioController : Controller
 {
     private readonly IRepositorioPropietario repositorio;
 
-    public PropietarioController(RepositorioPropietario repositorio)
+    public PropietarioController(IRepositorioPropietario repositorio)
     {
         this.repositorio = repositorio;
     }
@@ -44,7 +44,7 @@ public class PropietarioController : Controller
             return RedirectToAction("Index");
         }
 
-        Propietario propietarioEncontrado = null;
+        Propietario? propietarioEncontrado = null;
         var lista = repositorio.GetAll();
 
         foreach (var p in lista)
@@ -73,7 +73,7 @@ public class PropietarioController : Controller
             return RedirectToAction("Index");
         }
 
-        Propietario propietarioEncontrado = null;
+        Propietario? propietarioEncontrado = null;
         var lista = repositorio.GetAll();
 
         foreach (var p in lista)

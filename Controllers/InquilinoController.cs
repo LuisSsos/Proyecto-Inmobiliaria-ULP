@@ -6,9 +6,9 @@ namespace MVC.Controllers;
 
 public class InquilinoController : Controller
 {
-    private readonly RepositorioInquilino repositorio;
+    private readonly IRepositorioInquilino repositorio;
 
-    public InquilinoController(RepositorioInquilino repositorio)
+    public InquilinoController(IRepositorioInquilino repositorio)
     {
         this.repositorio = repositorio;
     }

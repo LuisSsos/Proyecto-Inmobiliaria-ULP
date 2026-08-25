@@ -1,28 +1,23 @@
 using MVC.Models;
-using MVC.db;
 using MySqlConnector;
 
 namespace MVC.Repositories;
 
-public class RepositorioInquilino
+public class RepositorioInquilino: RepositorioBase, IRepositorioInquilino
 {
-    private readonly Conexion conexion;
 
-    public RepositorioInquilino(Conexion conexion)
-    {
-        this.conexion = conexion;
-    }
+    public RepositorioInquilino(IConfiguration configuration) : base(configuration) { }
 
     //listar todos los inquilinos
     public List<Inquilino> ObtenerTodos()
     {
         var lista = new List<Inquilino>();
 
-        using var connection = conexion.GetConnection();
-        connection.Open();
+        using var connection = new MySqlConnection(connectionString);
 
         var query = "SELECT id, nombre_completo, dni, email, telefono FROM inquilino";
         using var command = new MySqlCommand(query, connection);
+        connection.Open();
         using var reader = command.ExecuteReader();
 
         while (reader.Read())
@@ -44,7 +39,7 @@ public class RepositorioInquilino
     //listar inquilino por id
     public Inquilino? ObtenerPorId(int id)
     {
-        using var connection = conexion.GetConnection();
+        using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
         var query = "SELECT id, nombre_completo, dni, email, telefono FROM inquilino WHERE id = @id";
@@ -72,7 +67,7 @@ public class RepositorioInquilino
     //alta de inquilino
     public void Crear(Inquilino inquilino)
     {
-        using var connection = conexion.GetConnection();
+        using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
         var query = "INSERT INTO inquilino (nombre_completo, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono)";
@@ -90,7 +85,7 @@ public class RepositorioInquilino
     // modificar inquilino
     public void Modificar(Inquilino inquilino)
     {
-        using var connection = conexion.GetConnection();
+        using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
         var query = "UPDATE inquilino SET nombre_completo = @nombre, dni = @dni, email = @email, telefono = @telefono WHERE id = @id";
@@ -109,7 +104,7 @@ public class RepositorioInquilino
     // baja de inquilino
     public void Eliminar(int id)
     {
-        using var connection = conexion.GetConnection();
+        using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
         var query = "DELETE FROM inquilino WHERE id = @id";

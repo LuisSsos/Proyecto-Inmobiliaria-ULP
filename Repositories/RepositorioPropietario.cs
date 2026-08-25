@@ -1,5 +1,4 @@
 using MVC.Models;
-using MVC.db;
 using MySqlConnector;
 
 namespace MVC.Repositories;
