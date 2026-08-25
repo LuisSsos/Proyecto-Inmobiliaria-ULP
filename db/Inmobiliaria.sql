@@ -93,3 +93,16 @@ ALTER TABLE `pago` ADD FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`);
 ALTER TABLE `pago` ADD FOREIGN KEY (`usuario_creador_id`) REFERENCES `usuario` (`id`);
 
 ALTER TABLE `pago` ADD FOREIGN KEY (`usuario_anulador_id`) REFERENCES `usuario` (`id`);
+
+INSERT INTO `propietario` (`nombre`, `dni_cuit`, `email`, `telefono`) VALUES
+('Pablo Poder', '20-39482103-8', 'pablo.poder@email.com', '+54 9 266 412-3456'),
+('Mariano Luzza', '20-26593841-3', 'mariano.luzza@email.com', '+54 9 266 423-4567'),
+('Luis Mercado', '20-26482019-5', 'luis.mercado@email.com', '+54 9 266 434-5678'),
+('Florencia Castro', '27-38192043-4', 'florencia.castro@email.com', '+54 9 266 445-6789');
+
+
+INSERT INTO `inquilino` (`dni`, `nombre_completo`, `email`, `telefono`) VALUES
+('42193840', 'Luis Sosa', 'luis.sosa@email.com', '+54 9 266 456-7890'),
+('34291048', 'Iván Auriol', 'ivan.auriol@email.com', '+54 9 266 467-8901'),
+('37482910', 'Romina Auriol', 'romina.auriol@email.com', '+54 9 266 478-9012'),
+('37829104', 'Brenda Efler', 'brenda.efler@email.com', '+54 9 266 489-0123');
