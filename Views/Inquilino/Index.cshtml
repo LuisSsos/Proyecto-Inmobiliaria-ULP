@@ -1,27 +1,44 @@
 @model List<MVC.Models.Inquilino>
+<!DOCTYPE html>
+<html>
 
-<h2>Inquilino</h2>
+<head>
+    <meta charset="utf-8" />
+    <title>Inquilinos</title>
+</head>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>DNI</th>
-            <th>Email</th>
-            <th>Telefono</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var inquilino in Model)
-        {
+<body>
+    <h2>Inquilino</h2>
+    <p>
+        <a asp-action="Create">+ Nuevo inquilino</a>
+    </p>
+    <table border="1">
+        <thead>
             <tr>
-                <td>@inquilino.id_inquilino</td>
-                <td>@inquilino.nombre_completo</td>
-                <td>@inquilino.dni</td>
-                <td>@inquilino.email</td>
-                <td>@inquilino.telefono</td>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Email</th>
+                <th>Telefono</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var inquilino in Model)
+            {
+                <tr>
+                    <td>@inquilino.id_inquilino</td>
+                    <td>@inquilino.nombre_completo</td>
+                    <td>@inquilino.dni</td>
+                    <td>@inquilino.email</td>
+                    <td>@inquilino.telefono</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@inquilino.id_inquilino">Editar</a> |
+                        <a asp-action="Eliminar" asp-route-id="@inquilino.id_inquilino">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+
+</html>
