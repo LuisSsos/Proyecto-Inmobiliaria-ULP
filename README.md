@@ -57,15 +57,6 @@ dotnet run
 
 Al ejecutar el proyecto, la te va a indicar en qué URL y puerto se está alojando (por ejemplo, `http://localhost:5063`). Este puerto se define en el archivo `Properties/launchSettings.json` de cada entorno.
 
-Actualmente, **el sistema no cuenta con una página de inicio con menú de navegación**. Para probar la aplicación, tenés que tipear directamente la ruta de los controladores en la barra de direcciones de tu navegador:
-
-* **Módulo de Propietarios:** `http://localhost:5063/Propietario`
-* **Módulo de Inquilinos:** `http://localhost:5063/Inquilino`
-
-*(Fijate de reemplazar `5063` por el puerto que te indique la consola al ejecutar `dotnet run`)*.
-
-Una vez dentro de cualquiera de esas dos pantallas  **podrás utilizar la interfaz gráfica normalmente** para acceder a los formularios de creación, edición y eliminación (Alta, Baja y Modificación) sin necesidad de escribir más rutas manualmente.
-
 ---
 
 ## Modelado
