@@ -19,21 +19,29 @@ public class InquilinoController : Controller
         return View(lista);
     }
 
-    // GET: muestra el formulario vacío
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: recibe el formulario y guarda
     [HttpPost]
     public IActionResult Create(Inquilino inquilino)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(inquilino);
+        }
+
+        if (repositorio.ExisteDni(inquilino.dni))
+        {
+            ModelState.AddModelError("dni", "Ya existe un inquilino registrado con ese DNI.");
+            return View(inquilino);
+        }
+
         repositorio.Crear(inquilino);
         return RedirectToAction("Index");
     }
 
-    // GET: muestra el formulario con los datos actuales
     public IActionResult Edit(int id)
     {
         var inquilino = repositorio.ObtenerPorId(id);
@@ -44,15 +52,24 @@ public class InquilinoController : Controller
         return View(inquilino);
     }
 
-    // POST: recibe el formulario editado y actualiza
     [HttpPost]
     public IActionResult Edit(Inquilino inquilino)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(inquilino);
+        }
+
+        if (repositorio.ExisteDni(inquilino.dni, inquilino.id_inquilino))
+        {
+            ModelState.AddModelError("dni", "Ya existe otro inquilino registrado con ese DNI.");
+            return View(inquilino);
+        }
+
         repositorio.Modificar(inquilino);
         return RedirectToAction("Index");
     }
 
-    // GET: muestra pantalla de confirmación
     public IActionResult Eliminar(int id)
     {
         var inquilino = repositorio.ObtenerPorId(id);
@@ -63,7 +80,6 @@ public class InquilinoController : Controller
         return View(inquilino);
     }
 
-    // POST: elimina de verdad
     [HttpPost, ActionName("Eliminar")]
     public IActionResult EliminarConfirmado(int id)
     {

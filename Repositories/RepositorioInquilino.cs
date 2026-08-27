@@ -3,9 +3,8 @@ using MySqlConnector;
 
 namespace MVC.Repositories;
 
-public class RepositorioInquilino: RepositorioBase, IRepositorioInquilino
+public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 {
-
     public RepositorioInquilino(IConfiguration configuration) : base(configuration) { }
 
     //listar todos los inquilinos
@@ -26,7 +25,7 @@ public class RepositorioInquilino: RepositorioBase, IRepositorioInquilino
             {
                 id_inquilino = reader.GetInt32("id"),
                 dni = reader.IsDBNull(reader.GetOrdinal("dni")) ? "" : reader.GetString("dni"),
-                nombre_completo = reader.GetString("nombre_completo"),
+                nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo")) ? "" : reader.GetString("nombre_completo"),
                 email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
                 telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
             };
@@ -62,6 +61,22 @@ public class RepositorioInquilino: RepositorioBase, IRepositorioInquilino
         }
 
         return null;
+    }
+
+    // verifica si ya existe un inquilino con ese DNI (idExcluir sirve para editar sin chocar contra sí mismo)
+    public bool ExisteDni(string dni, int idExcluir = 0)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query = "SELECT COUNT(*) FROM inquilino WHERE dni = @dni AND id != @idExcluir";
+
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@dni", dni);
+        command.Parameters.AddWithValue("@idExcluir", idExcluir);
+
+        var count = Convert.ToInt32(command.ExecuteScalar());
+        return count > 0;
     }
 
     //alta de inquilino

@@ -8,5 +8,5 @@ public interface IRepositorioPropietario
     int Baja(int id);
     int Modificacion(Propietario p);
     IList<Propietario> GetAll();
-
+    bool ExisteDniCuit(string dniCuit, int idExcluir = 0);
 }

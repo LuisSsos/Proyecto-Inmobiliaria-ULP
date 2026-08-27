@@ -6,7 +6,6 @@ namespace MVC.Repositories;
 public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 {
     public RepositorioPropietario(IConfiguration configuration) : base(configuration) { }
-    //private readonly Conexion conexion;
 
     public int Alta(Propietario p)
     {
@@ -52,6 +51,21 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         return command.ExecuteNonQuery();
     }
 
+    // verifica si ya existe un propietario con ese DNI/CUIT
+    public bool ExisteDniCuit(string dniCuit, int idExcluir = 0)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var sql = "SELECT COUNT(*) FROM propietario WHERE dni_cuit = @dniCuit AND id != @idExcluir";
+        using var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@dniCuit", dniCuit);
+        command.Parameters.AddWithValue("@idExcluir", idExcluir);
+
+        var count = Convert.ToInt32(command.ExecuteScalar());
+        return count > 0;
+    }
+
     public IList<Propietario> GetAll()
     {
         var lista = new List<Propietario>();
@@ -60,12 +74,12 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         using var command = new MySqlCommand(sql, connection);
         connection.Open();
         using var reader = command.ExecuteReader();
-        while(reader.Read())
+        while (reader.Read())
         {
             lista.Add(new Propietario
             {
                 IdPropietario = reader.GetInt32("id"),
-                Nombre = reader.GetString("nombre"),
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
                 DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
                 Email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
                 Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
@@ -74,37 +88,3 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         return lista;
     }
 }
-
-/*
-public RepositorioPropietario(Conexion conexion)
-{
-    this.conexion = conexion;
-}
-
-public List<Propietario> GetAll()
-{
-    var lista = new List<Propietario>();
-
-    using var connection = conexion.GetConnection();
-    connection.Open();
-
-    var query = "SELECT id, nombre, dni_cuit, email, telefono FROM propietario";
-    using var command = new MySqlCommand(query, connection);
-    using var reader = command.ExecuteReader();
-
-    while (reader.Read())
-    {
-        var propietario = new Propietario
-        {
-            id_propietario = reader.GetInt32("id"),
-            nombre_completo = reader.GetString("nombre"),
-            dniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
-            email = reader.IsDBNull(reader.GetOrdinal("email")) ? null : reader.GetString("email"),
-            telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? null : reader.GetString("telefono")
-        };
-        lista.Add(propietario);
-    }
-
-    return lista;
-}
-}*/

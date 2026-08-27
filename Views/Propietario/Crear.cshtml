@@ -11,15 +11,17 @@
     <h2>Crear Nuevo Propietario</h2>
     <hr />
 
+    <div asp-validation-summary="All" style="color:red"></div>
+
     <form asp-action="Crear" method="post">
         <div class="campo">
             <label>Nombre Completo</label>
-            <input type="text" name="Nombre" required />
+            <input type="text" name="Nombre" />
         </div>
 
         <div class="campo">
             <label>DNI / CUIT</label>
-            <input type="text" name="DniCuit" required />
+            <input type="text" name="DniCuit" />
         </div>
 
         <div class="campo">

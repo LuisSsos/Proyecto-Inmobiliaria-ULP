@@ -19,31 +19,33 @@ public class PropietarioController : Controller
         return View(lista);
     }
 
-    // met para el alta del repo
-    public IActionResult Crear(Propietario propietario)
+    [HttpGet]
+    public IActionResult Crear()
     {
-        //el Request lo hereda de la clase Controller
-        //es una propiedad de ASP.net core que representa la petición http que hace el navegador del user
-        if (Request.Method == "POST")
-        {
-            repositorio.Alta(propietario);
-            //el redirecttoaction tambien es un metodo heredado de controller, envia una instruiacción al navegador del user para que
-            //haga una nueva petición a la acción indicada (index en este caso)
-            return RedirectToAction("Index");
-        }
-
         return View();
     }
 
-    // formulario p/editar y guarda los cambios con el metodo de modificacion del repo y luego getall para mostrar los cambios
-    public IActionResult Editar(int id, Propietario propietario)
+    [HttpPost]
+    public IActionResult Crear(Propietario propietario)
     {
-        if (Request.Method == "POST")
+        if (!ModelState.IsValid)
         {
-            repositorio.Modificacion(propietario);
-            return RedirectToAction("Index");
+            return View(propietario);
         }
 
+        if (repositorio.ExisteDniCuit(propietario.DniCuit))
+        {
+            ModelState.AddModelError("DniCuit", "Ya existe un propietario registrado con ese DNI/CUIT.");
+            return View(propietario);
+        }
+
+        repositorio.Alta(propietario);
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult Editar(int id)
+    {
         Propietario? propietarioEncontrado = null;
         var lista = repositorio.GetAll();
 
@@ -64,15 +66,27 @@ public class PropietarioController : Controller
         return View(propietarioEncontrado);
     }
 
-    // form para confirmación de eliminación y realiza la baja
-    public IActionResult Eliminar(int id)
+    [HttpPost]
+    public IActionResult Editar(Propietario propietario)
     {
-        if (Request.Method == "POST")
+        if (!ModelState.IsValid)
         {
-            repositorio.Baja(id);
-            return RedirectToAction("Index");
+            return View(propietario);
         }
 
+        if (repositorio.ExisteDniCuit(propietario.DniCuit, propietario.IdPropietario))
+        {
+            ModelState.AddModelError("DniCuit", "Ya existe otro propietario registrado con ese DNI/CUIT.");
+            return View(propietario);
+        }
+
+        repositorio.Modificacion(propietario);
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult Eliminar(int id)
+    {
         Propietario? propietarioEncontrado = null;
         var lista = repositorio.GetAll();
 
@@ -91,5 +105,12 @@ public class PropietarioController : Controller
         }
 
         return View(propietarioEncontrado);
+    }
+
+    [HttpPost, ActionName("Eliminar")]
+    public IActionResult EliminarConfirmado(int id)
+    {
+        repositorio.Baja(id);
+        return RedirectToAction("Index");
     }
 }
