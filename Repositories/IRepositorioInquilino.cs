@@ -9,5 +9,5 @@ public interface IRepositorioInquilino
     void Modificar(Inquilino i);
     List<Inquilino> ObtenerTodos();
     Inquilino? ObtenerPorId(int id);
-
+    bool ExisteDni(string dni, int idExcluir = 0);
 }
