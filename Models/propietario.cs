@@ -5,8 +5,8 @@ namespace MVC.Models
         public int IdPropietario { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public string DniCuit { get; set; } = string.Empty;
-        public string? Email { get; set; }
-        public string? Telefono { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
 
     }
 }

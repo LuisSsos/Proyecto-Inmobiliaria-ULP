@@ -20,30 +20,23 @@ public class PropietarioController : Controller
     }
 
     // met para el alta del repo
+    [HttpGet]
+    public IActionResult Crear()
+    {
+        return View();
+    }
+    [HttpPost]
     public IActionResult Crear(Propietario propietario)
     {
-        //el Request lo hereda de la clase Controller
-        //es una propiedad de ASP.net core que representa la petición http que hace el navegador del user
-        if (Request.Method == "POST")
-        {
-            repositorio.Alta(propietario);
-            //el redirecttoaction tambien es un metodo heredado de controller, envia una instruiacción al navegador del user para que
-            //haga una nueva petición a la acción indicada (index en este caso)
-            return RedirectToAction("Index");
-        }
-
-        return View();
+        repositorio.Alta(propietario);
+        return RedirectToAction(nameof(Index));
     }
 
     // formulario p/editar y guarda los cambios con el metodo de modificacion del repo y luego getall para mostrar los cambios
+
+    [HttpGet]
     public IActionResult Editar(int id, Propietario propietario)
     {
-        if (Request.Method == "POST")
-        {
-            repositorio.Modificacion(propietario);
-            return RedirectToAction("Index");
-        }
-
         Propietario? propietarioEncontrado = null;
         var lista = repositorio.GetAll();
 
@@ -58,38 +51,45 @@ public class PropietarioController : Controller
 
         if (propietarioEncontrado == null)
         {
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(propietarioEncontrado);
+    }
+    [HttpPost]
+    public IActionResult Editar(Propietario propietario)
+    {
+        repositorio.Modificacion(propietario);
+        return RedirectToAction(nameof(Index));
+    }
+    // form para confirmación de eliminación y realiza la baja
+    [HttpGet]
+    public IActionResult Eliminar(int id)
+    {
+        Propietario? propietarioEncontrado = null;
+        var lista = repositorio.GetAll();
+
+        foreach (var p in lista)
+        {
+            if (p.IdPropietario == id)
+            {
+                propietarioEncontrado = p;
+                break;
+            }
+        }
+
+        if (propietarioEncontrado == null)
+        {
+            return RedirectToAction(nameof(Index));
         }
 
         return View(propietarioEncontrado);
     }
 
-    // form para confirmación de eliminación y realiza la baja
-    public IActionResult Eliminar(int id)
+    [HttpPost]
+    public IActionResult Eliminar(Propietario propietario)
     {
-        if (Request.Method == "POST")
-        {
-            repositorio.Baja(id);
-            return RedirectToAction("Index");
-        }
-
-        Propietario? propietarioEncontrado = null;
-        var lista = repositorio.GetAll();
-
-        foreach (var p in lista)
-        {
-            if (p.IdPropietario == id)
-            {
-                propietarioEncontrado = p;
-                break;
-            }
-        }
-
-        if (propietarioEncontrado == null)
-        {
-            return RedirectToAction("Index");
-        }
-
-        return View(propietarioEncontrado);
+        repositorio.Baja(propietario.IdPropietario);
+        return RedirectToAction(nameof(Index));
     }
 }
