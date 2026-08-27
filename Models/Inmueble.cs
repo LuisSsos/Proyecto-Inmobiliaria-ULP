@@ -1,4 +1,6 @@
 
+using MVC.Models;
+
 public class Inmueble{
     public int IdInmueble {get; set;}
     public int PropietarioId {get; set;}
@@ -10,4 +12,9 @@ public class Inmueble{
     public decimal PrecioPorDia {get; set;}
     public decimal PorcentajeSeña{get; set;}
     public string Estado {get; set;} = string.Empty;
+
+
+    public Propietario? Titular{get; set;}
+    public TipoInmueble? Tipo{get; set;}
+
 }

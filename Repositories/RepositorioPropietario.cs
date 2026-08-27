@@ -56,7 +56,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
     {
         var lista = new List<Propietario>();
         using var connection = new MySqlConnection(connectionString);
-        string sql = "SELECT id, nombre, dni_cuit, email, telefono FROM propietario";
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono FROM propietario";
         using var command = new MySqlCommand(sql, connection);
         connection.Open();
         using var reader = command.ExecuteReader();

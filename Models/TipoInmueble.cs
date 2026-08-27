@@ -1,5 +1,9 @@
-public class TipoInmueble{
-    public int id_tipoInmueble {get; set;}
-    public string nombre {get; set;} = string.Empty;
-    
+namespace MVC.Models
+{
+    public class TipoInmueble
+    {
+        public int IdTipoInmueble { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+
+    }
 }

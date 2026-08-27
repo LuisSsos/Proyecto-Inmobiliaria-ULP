@@ -4,7 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<MVC.Repositories.IRepositorioPropietario, MVC.Repositories.RepositorioPropietario>();
 builder.Services.AddScoped<MVC.Repositories.IRepositorioInquilino, MVC.Repositories.RepositorioInquilino>();
-
+builder.Services.AddScoped<MVC.Repositories.IRepositorioTipoInmueble, MVC.Repositories.RepositorioTipoInmueble>();
+builder.Services.AddScoped<MVC.Repositories.IRepositorioInmueble, MVC.Repositories.RepositorioInmueble>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
