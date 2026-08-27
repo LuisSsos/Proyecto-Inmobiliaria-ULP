@@ -11,27 +11,29 @@
     <h2>Editar propietario</h2>
     <hr />
 
+    <div asp-validation-summary="All" style="color:red"></div>
+
     <form asp-action="Editar" method="post">
-        <input type="hidden" asp-for="IdPropietario"/>
+        <input type="hidden" name="IdPropietario" value="@Model.IdPropietario" />
 
         <div class="campo">
             <label>Nombre Completo</label>
-            <input type="text" asp-for="Nombre" required />
+            <input type="text" name="Nombre" value="@Model.Nombre" required />
         </div>
 
         <div class="campo">
             <label>DNI / CUIT</label>
-            <input type="text"asp-for="DniCuit" required />
+            <input type="text" name="DniCuit" value="@Model.DniCuit" required />
         </div>
 
         <div class="campo">
             <label>Email</label>
-            <input type="email" asp-for="Email" />
+            <input type="email" name="Email" value="@Model.Email" />
         </div>
 
         <div class="campo">
             <label>Teléfono</label>
-            <input type="text" asp-for="Telefono" />
+            <input type="text" name="Telefono" value="@Model.Telefono" />
         </div>
 
         <button type="submit">Actualizar</button>
