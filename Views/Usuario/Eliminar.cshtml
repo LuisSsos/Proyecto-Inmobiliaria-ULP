@@ -1,0 +1,15 @@
+@model MVC.Models.Usuario
+
+<h2>Eliminar Usuario</h2>
+
+<p>¿Estás seguro que querés eliminar este usuario?</p>
+
+<div><strong>Nombre:</strong> @Model.nombre @Model.apellido</div>
+<div><strong>Email:</strong> @Model.email</div>
+<div><strong>Rol:</strong> @Model.rol</div>
+
+<form asp-action="Eliminar" method="post">
+    <input type="hidden" asp-for="id_usuario" />
+    <button type="submit">Sí, eliminar</button>
+    <a asp-action="Index">Cancelar</a>
+</form>
