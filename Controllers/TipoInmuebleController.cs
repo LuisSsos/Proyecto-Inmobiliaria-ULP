@@ -28,13 +28,18 @@ public class TipoInmuebleController : Controller
     [HttpPost]
     public IActionResult Crear(TipoInmueble ti)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(ti);
+        }
         repo.Alta(ti);
         return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public IActionResult Editar(int id, TipoInmueble ti)
+    public IActionResult Editar(int id)
     {
+        /*
         TipoInmueble? tipoEncontrado = null;
         var lista = repo.GetAll();
 
@@ -52,12 +57,24 @@ public class TipoInmuebleController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        return View(tipoEncontrado);*/
+        var tipoEncontrado = repo.GetAll().FirstOrDefault(t => t.IdTipoInmueble == id);
+
+        if (tipoEncontrado == null)
+        {
+            return NotFound(); 
+        }
+
         return View(tipoEncontrado);
     }    
 
     [HttpPost]
     public IActionResult Editar(TipoInmueble ti)
     {
+        if(!ModelState.IsValid)
+        {
+            return View(ti);
+        }
         repo.Modificacion(ti);
         return RedirectToAction(nameof(Index));
     }
@@ -65,7 +82,8 @@ public class TipoInmuebleController : Controller
     [HttpGet]
     public IActionResult Eliminar(int id)
     {
-        TipoInmueble? tipoEncontrado = null;
+        TipoInmueble? tipoEncontrado = (repo.GetAll()).FirstOrDefault(t=>t.IdTipoInmueble==id);
+         /*
         var lista = repo.GetAll();
         foreach (var t in lista)
         {
@@ -75,6 +93,8 @@ public class TipoInmuebleController : Controller
                 break;
             }
         }
+
+        */
         if (tipoEncontrado == null)
         {
             return RedirectToAction(nameof(Index));

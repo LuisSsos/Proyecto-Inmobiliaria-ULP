@@ -1,31 +1,188 @@
+/*
+   COLORES PRINCIPALES
+*/
+
+:root {
+    --rosa-principal: #9b5c6b;
+    --rosa-claro: #d89aa8;
+    --rosa-suave: #f8eee8;
+    --beige: #e8d5c4;
+    --crema: #fffaf5;
+    --marron: #6f4e4e;
+    --marron-claro: #7a6258;
+}
+
+
+/*
+  GENERAL
+   */
+
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    font-size: 14px;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--crema);
+    color: var(--marron);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+
+/*
+   NAVBAR
+ */
+
+.navbar-luvarem {
+    background-color: var(--crema);
+    border-bottom: 1px solid var(--beige);
+    box-shadow: 0 2px 10px rgba(111, 78, 78, 0.08);
+    padding: 15px 0;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar-luvarem .navbar-brand {
+    color: var(--rosa-principal);
+    font-size: 1.35rem;
+}
+
+.navbar-luvarem .navbar-brand:hover {
+    color: var(--rosa-principal);
+}
+
+.navbar-luvarem .nav-link {
+    color: var(--marron);
+    margin-left: 10px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.navbar-luvarem .nav-link:hover {
+    background-color: var(--rosa-suave);
+    color: var(--rosa-principal);
+}
+
+
+/*
+   LINKS
+*/
+
+a {
+    color: var(--rosa-principal);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--rosa-claro);
+}
+
+
+/*
+   BOTONES
+*/
+
+.btn-primary {
+    background-color: var(--rosa-claro);
+    border-color: var(--rosa-claro);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--rosa-principal);
+    border-color: var(--rosa-principal);
+    color: white;
+}
+
+.btn-luvarem {
+    background-color: var(--rosa-claro);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: 0.2s;
+}
+
+.btn-luvarem:hover {
+    background-color: var(--rosa-principal);
+    color: white;
+}
+
+
+/*
+   TARJETAS
+*/
+
+.card {
+    background-color: var(--crema);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(111, 78, 78, 0.08);
+}
+
+.card-title {
+    color: var(--rosa-principal);
+}
+
+.card-text {
+    color: var(--marron-claro);
+}
+
+
+/*
+   SECCIONES
+*/
+
+.seccion-luvarem {
+    background-color: var(--rosa-suave);
+}
+
+.titulo-luvarem {
+    color: var(--rosa-principal);
+}
+
+.texto-luvarem {
+    color: var(--marron-claro);
+}
+
+
+/*
+   FOOTER
+*/
+
+.footer-luvarem {
+    background-color: var(--rosa-suave);
+    border-top: 1px solid var(--beige);
+    color: var(--marron-claro);
+    padding: 20px 0;
+    margin-top: 60px;
+}
+
+
+/*
+   BORDES Y SOMBRAS
+*/
+
+.border-top {
+    border-top: 1px solid var(--beige) !important;
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--beige) !important;
+}
+
+.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgba(111, 78, 78, 0.08);
+}
+
+
+/*
+   RESPONSIVE
+*/
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }

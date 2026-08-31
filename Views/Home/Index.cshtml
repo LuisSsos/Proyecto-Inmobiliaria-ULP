@@ -1,178 +1,122 @@
 ﻿@{
-ViewData["Title"] = "Inicio";
+    ViewData["Title"] = "Inicio";
 }
 
-<!-- Portada --> <div class="container-fluid py-5 mb-5" style="background-color: #f8eee8;"> <div class="container text-center py-5"> <h1 class="display-2 fw-bold" style="color: #9b5c6b;"> Muebleria ULP </h1>
-    <p class="display-6" style="color: #6f4e4e;">
-        Muebles que hacen de tu casa un hogar
-    </p>
+<!-- portada -->
+<div class="container-fluid py-5 mb-5 seccion-luvarem">
 
-    <a href="#productos" class="btn btn-lg"
-       style="background-color: #d89aa8; color: white;">
-        productos
-    </a>
-</div>
+    <div class="container text-center py-5">
 
-</div> <!-- Categorias --> <div class="container mb-5">
-<div class="text-center mb-4">
-    <h2 class="fw-bold" style="color: #9b5c6b;">
-        categorias
-    </h2>
-</div>
+        <h1 class="display-2 fw-bold titulo-luvarem">
+            Inmobiliaria Luvarem
+        </h1>
 
-<div class="row g-4">
+        <p class="display-6 texto-luvarem">
+            Encontrá la casa de tus sueños uwu
+        </p>
 
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm text-center border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h3 class="card-title" style="color: #9b5c6b;">
-                    living
-                </h3>
+        <a href="#opciones" class="btn btn-lg btn-luvarem">
+            Ver opciones
+        </a>
 
-                <p class="card-text" style="color: #7a6258;">
-                    Sillones.mesas y mucho mas.
-                </p>
-
-                <a href="#" class="btn"
-                   style="background-color: #e8d5c4; color: #6f4e4e;">
-                    ver muebles
-                </a>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm text-center border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h3 class="card-title" style="color: #9b5c6b;">
-                    habitacion
-                </h3>
-
-                <p class="card-text" style="color: #7a6258;">
-                    Cama y placares
-                </p>
-
-                <a href="#" class="btn"
-                   style="background-color: #e8d5c4; color: #6f4e4e;">
-                    Ver muebles
-                </a>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm text-center border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h3 class="card-title" style="color: #9b5c6b;">
-                    comedor
-                </h3>
-
-                <p class="card-text" style="color: #7a6258;">
-                    mesas, sillas y muebles para el comedr
-                </p>
-
-                <a href="#" class="btn"
-                   style="background-color: #e8d5c4; color: #6f4e4e;">
-                    ver muebles
-                </a>
-            </div>
-        </div>
     </div>
 
 </div>
 
-</div> <!-- Productos destacados --> <div class="container mb-5" id="productos">
-<div class="text-center mb-4">
-    <h2 class="fw-bold" style="color: #9b5c6b;">
-        productos destacados
-    </h2>
 
-    <p style="color: #7a6258;">
-        nuestros muebles
-    </p>
-</div>
+<!-- ppciones -->
+<div class="container mb-5" id="opciones">
 
-<div class="row g-4">
+    <div class="text-center mb-4">
 
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h4 class="card-title" style="color: #9b5c6b;">
-                    Sillon
-                </h4>
+        <h2 class="fw-bold titulo-luvarem">
+            Nuestra inmobiliaria
+        </h2>
 
-                <p class="card-text" style="color: #7a6258;">
-                    Sillon comodo para living.
-                </p>
+        <p class="texto-luvarem">
+            Conocé nuestras opciones
+        </p>
 
-                <h5 style="color: #b56b7b;">
-                    $250.000
-                </h5>
-
-                <a href="#" class="btn mt-2"
-                   style="background-color: #d89aa8; color: white;">
-                    Ver producto
-                </a>
-            </div>
-        </div>
     </div>
 
 
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h4 class="card-title" style="color: #9b5c6b;">
-                    Mesa de comedor
-                </h4>
+    <div class="row g-4">
 
-                <p class="card-text" style="color: #7a6258;">
-                    Mesa de madera
-                </p>
+        <!-- propietarios -->
+        <div class="col-md-6">
 
-                <h5 style="color: #b56b7b;">
-                    $180.000
-                </h5>
+            <div class="card h-100 text-center">
 
-                <a href="#" class="btn mt-2"
-                   style="background-color: #d89aa8; color: white;">
-                    Ver producto
-                </a>
+                <div class="card-body p-5">
+
+                    <h3 class="card-title">
+                        Propietarios
+                    </h3>
+
+                    <p class="card-text">
+                        Consultá la información de los propietarios
+                        registrados en nuestra inmobiliaria.
+                    </p>
+
+                    <a asp-controller="Propietario"
+                       asp-action="Index"
+                       class="btn btn-luvarem mt-2">
+                        Ver propietarios
+                    </a>
+
+                </div>
+
             </div>
+
         </div>
-    </div>
 
 
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0"
-             style="background-color: #fffaf5;">
-            <div class="card-body">
-                <h4 class="card-title" style="color: #9b5c6b;">
-                    Placard
-                </h4>
+        <!-- inquilinos -->
+        <div class="col-md-6">
 
-                <p class="card-text" style="color: #7a6258;">
-                    Placard Grande
-                </p>
+            <div class="card h-100 text-center">
 
-                <h5 style="color: #b56b7b;">
-                    $320.000
-                </h5>
+                <div class="card-body p-5">
 
-                <a href="#" class="btn mt-2"
-                   style="background-color: #d89aa8; color: white;">
-                    Ver producto
-                </a>
+                    <h3 class="card-title">
+                        Inquilinos
+                    </h3>
+
+                    <p class="card-text">
+                        Consultá la información de los inquilinos
+                        registrados en nuestra inmobiliaria.
+                    </p>
+
+                    <a asp-controller="Inquilino"
+                       asp-action="Index"
+                       class="btn btn-luvarem mt-2">
+                        Ver inquilinos
+                    </a>
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
 </div>
+
+
+<!-- presentación -->
+<div class="container-fluid py-5 seccion-luvarem">
+
+    <div class="container text-center">
+
+        <h2 class="fw-bold titulo-luvarem">
+            Inmobiliaria Luvarem
+        </h2>
+
+        <p class="lead texto-luvarem">
+            Tu próximo hogar puede estar más cerca de lo que imaginás.
+        </p>
+
+    </div>
 
 </div>
