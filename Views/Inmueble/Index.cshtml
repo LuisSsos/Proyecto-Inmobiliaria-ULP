@@ -1,0 +1,44 @@
+@model IEnumerable<MVC.Models.Inmueble>
+
+@{
+    ViewData["Title"] = "Listado de Inmuebles";
+}
+
+<h2>Listado de Inmuebles</h2>
+
+<p>
+    <a asp-action="Crear" class="btn btn-primary">Nuevo inmueble</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Cupo</th>
+            <th>Precio por día</th>
+            <th>Porcentaje de seña</th>
+            <th>Estado</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Direccion</td>
+                <td>@item.Cupo</td>
+                <td>@item.PrecioPorDia.ToString("C")</td>
+                <td>@item.PorcentajeSeña%</td>
+                <td>@item.Estado</td>
+                <td>@(item.Titular != null ? item.Titular.Nombre : "Sin propietario asignado")</td>
+                <td>@(item.Tipo != null ? item.Tipo.Nombre : "Sin especificar")</td>
+                <td>
+                    <a asp-action="Editar" asp-route-id="@item.IdInmueble">Editar</a> |
+                    <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

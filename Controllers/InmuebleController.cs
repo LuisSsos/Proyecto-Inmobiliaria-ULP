@@ -52,7 +52,7 @@ public class InmuebleController : Controller
     [HttpGet]
     public IActionResult Eliminar(int id)
     {   
-        var inmueble = (repoInmueble.GetAll()).FirstOrDefault(i=>i.PropietarioId==id);
+        var inmueble = (repoInmueble.GetAll()).FirstOrDefault(i=>i.IdInmueble==id);
         if (inmueble == null)
         {
             return NotFound();
@@ -70,11 +70,12 @@ public class InmuebleController : Controller
     [HttpGet]
     public IActionResult Editar(int id)
     {
-        var inmueble = (repoInmueble.GetAll()).FirstOrDefault(i=>i.PropietarioId==id);
+        var inmueble = (repoInmueble.GetAll()).FirstOrDefault(i=>i.IdInmueble==id);
         if (inmueble == null)
         {
             return NotFound();
         }
+        CargarForeignInmueble();
         return View(inmueble);
     }
     [HttpPost]

@@ -1,0 +1,35 @@
+@model MVC.Models.Inmueble
+
+@{
+    ViewData["Title"] = "Eliminar Inmueble";
+}
+
+<h2>Eliminar Inmueble</h2>
+<h3 style="color:red">¿Está seguro de que desea eliminar este inmueble del sistema?</h3>
+
+<div>
+    <h4>Detalles de la propiedad</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Dirección:</dt>
+        <dd class="col-sm-9">@Model.Direccion</dd>
+
+        <dt class="col-sm-3">Cupo máximo:</dt>
+        <dd class="col-sm-9">@Model.Cupo huéspedes</dd>
+
+        <dt class="col-sm-3">Precio por día:</dt>
+        <dd class="col-sm-9">@Model.PrecioPorDia.ToString("C")</dd>
+
+        <dt class="col-sm-3">Propietario:</dt>
+        <dd class="col-sm-9">@(Model.Titular != null ? Model.Titular.Nombre : "No asignado")</dd>
+
+        <dt class="col-sm-3">Tipo de inmueble:</dt>
+        <dd class="col-sm-9">@(Model.Tipo != null ? Model.Tipo.Nombre : "No asignado")</dd>
+    </dl>
+
+    <form asp-action="Eliminar" method="post">
+        <input type="hidden" asp-for="IdInmueble" />
+        <button type="submit" class="btn btn-danger">Confirmar la baja</button> |
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

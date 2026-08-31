@@ -1,0 +1,78 @@
+@model MVC.Models.Inmueble
+@{
+    ViewData["Title"] = "Nuevo inmueble";
+}
+
+<h2>Nuevo Inmueble</h2>
+
+<div asp-validation-summary="All" style="color:red"></div>
+
+<form asp-action="Crear" method="post">
+    <div>
+        <label asp-for="Direccion">Dirección</label>
+        <input asp-for="Direccion" />
+        <span asp-validation-for="Direccion" style="color:red"></span>
+    </div>
+    
+    <div>
+        <label asp-for="Cupo">Cupo de huéspedes</label>
+        <input asp-for="Cupo" type="number" min="1"/>
+        <span asp-validation-for="Cupo" style="color:red"></span>
+    </div>
+
+    <div>
+        <label asp-for="Latitud">Latitud geográfica</label>
+        <input asp-for="Latitud" type="text" />
+        <span asp-validation-for="Latitud" style="color:red"></span>
+    </div>
+
+    <div>
+        <label asp-for="Longitud">Longitud geográfica</label>
+        <input asp-for="Longitud" type="text" />
+        <span asp-validation-for="Longitud" style="color:red"></span>
+    </div>
+
+    <div>
+        <label asp-for="PrecioPorDia">Precio por día</label>
+        <input asp-for="PrecioPorDia" type="text" />
+        <span asp-validation-for="PrecioPorDia" style="color:red"></span>
+    </div>
+
+    <div>
+        <label asp-for="PorcentajeSeña">Porcentaje de seña</label>
+        <input asp-for="PorcentajeSeña" type="text" />
+        <span asp-validation-for="PorcentajeSeña" style="color:red"></span>
+    </div>
+
+    <div>
+        <label asp-for="Estado">Estado</label>
+        <select asp-for="Estado">
+            <option value="Disponible">Disponible</option>
+            <option value="No Disponible">No disponible</option>
+        </select>
+        <span asp-validation-for="Estado" style="color:red"></span>
+    </div>
+
+    <div>
+        <label>Propietario / Titular</label>
+        <select asp-for="PropietarioId" asp-items="@(new SelectList(ViewBag.Props, "IdPropietario", "Nombre"))">
+            <option value="">-- Seleccione un propietario --</option>
+        </select>
+        <span asp-validation-for="PropietarioId" style="color:red"></span>
+    </div>
+
+    <div>
+        <label>Tipo de Inmueble</label>
+        <select asp-for="TipoInmuebleId" asp-items="@(new SelectList(ViewBag.Tipos, "IdTipoInmueble", "Nombre"))">
+            <option value="">-- Seleccione un tipo de inmueble --</option>
+        </select>
+        <span asp-validation-for="TipoInmuebleId" style="color:red"></span>
+    </div>
+
+    <br />
+    <button type="submit">Guardar inmueble</button>
+</form>
+
+<p>
+    <a asp-action="Index">Volver al listado</a>
+</p>

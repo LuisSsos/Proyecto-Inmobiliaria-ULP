@@ -3,7 +3,7 @@
 }
 
 <!-- portada -->
-<div class="container-fluid py-5 mb-5 seccion-luvarem">
+<div class="container-fluid py-2 mb-2 seccion-luvarem">
 
     <div class="container text-center py-5">
 
@@ -15,10 +15,6 @@
             Encontrá la casa de tus sueños uwu
         </p>
 
-        <a href="#opciones" class="btn btn-lg btn-luvarem">
-            Ver opciones
-        </a>
-
     </div>
 
 </div>
@@ -27,17 +23,6 @@
 <!-- ppciones -->
 <div class="container mb-5" id="opciones">
 
-    <div class="text-center mb-4">
-
-        <h2 class="fw-bold titulo-luvarem">
-            Nuestra inmobiliaria
-        </h2>
-
-        <p class="texto-luvarem">
-            Conocé nuestras opciones
-        </p>
-
-    </div>
 
 
     <div class="row g-4">
@@ -58,9 +43,7 @@
                         registrados en nuestra inmobiliaria.
                     </p>
 
-                    <a asp-controller="Propietario"
-                       asp-action="Index"
-                       class="btn btn-luvarem mt-2">
+                    <a asp-controller="Propietario" asp-action="Index" class="btn btn-luvarem mt-2">
                         Ver propietarios
                     </a>
 
@@ -87,9 +70,7 @@
                         registrados en nuestra inmobiliaria.
                     </p>
 
-                    <a asp-controller="Inquilino"
-                       asp-action="Index"
-                       class="btn btn-luvarem mt-2">
+                    <a asp-controller="Inquilino" asp-action="Index" class="btn btn-luvarem mt-2">
                         Ver inquilinos
                     </a>
 
@@ -99,24 +80,73 @@
 
         </div>
 
+        <div class="col-md-6">
+
+            <div class="card h-100 text-center">
+
+                <div class="card-body p-5">
+
+                    <h3 class="card-title">
+                        Inmuebles
+                    </h3>
+
+                    <p class="card-text">
+                        Consultá la información de los inmuebles
+                        registrados en nuestra inmobiliaria.
+                    </p>
+
+                    <a asp-controller="Inmueble" asp-action="Index" class="btn btn-luvarem mt-2">
+                        Ver inmuebles
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card h-100 text-center">
+
+                <div class="card-body p-5">
+
+                    <h3 class="card-title">
+                        Reservas
+                    </h3>
+
+                    <p class="card-text">
+                        Consultá la información de las reservas
+                        registradas en nuestra inmobiliaria.
+                    </p>
+
+                    <a class="btn btn-luvarem mt-2">
+                        Ver reservas
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
     </div>
 
-</div>
+        
+    
 
+    <!-- presentación
+    <div class="container-fluid py-5 seccion-luvarem">
 
-<!-- presentación -->
-<div class="container-fluid py-5 seccion-luvarem">
+        <div class="container text-center">
 
-    <div class="container text-center">
+            <h2 class="fw-bold titulo-luvarem">
+                Inmobiliaria Luvarem
+            </h2>
 
-        <h2 class="fw-bold titulo-luvarem">
-            Inmobiliaria Luvarem
-        </h2>
+            <p class="lead texto-luvarem">
+                Tu próximo hogar puede estar más cerca de lo que imaginás.
+            </p>
 
-        <p class="lead texto-luvarem">
-            Tu próximo hogar puede estar más cerca de lo que imaginás.
-        </p>
+        </div>
 
-    </div>
-
-</div>
+    </div> -->
