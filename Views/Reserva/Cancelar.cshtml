@@ -1,0 +1,27 @@
+@model MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Cancelar Reserva";
+}
+
+<h1>Cancelar Reserva</h1>
+
+<p>¿Está seguro de que desea cancelar esta reserva?</p>
+
+<div>
+    <p><strong>Fecha desde:</strong> @Model.fecha_desde.ToString("dd/MM/yyyy")</p>
+    <p><strong>Fecha hasta:</strong> @Model.fecha_hasta.ToString("dd/MM/yyyy")</p>
+    <p><strong>Monto por día:</strong> $@Model.monto_por_dia</p>
+</div>
+
+<form asp-action="Cancelar" method="post">
+    <input type="hidden" asp-for="id_reserva" />
+
+    <button type="submit" class="btn btn-danger">
+        Confirmar cancelación
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Volver
+    </a>
+</form>

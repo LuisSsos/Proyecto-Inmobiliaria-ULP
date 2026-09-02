@@ -36,7 +36,8 @@
                 <td>@(item.Tipo != null ? item.Tipo.Nombre : "Sin especificar")</td>
                 <td>
                     <a asp-action="Editar" asp-route-id="@item.IdInmueble">Editar</a> |
-                    <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a>
+                    <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a>|
+                    <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble"> Reservar </a>
                 </td>
             </tr>
         }

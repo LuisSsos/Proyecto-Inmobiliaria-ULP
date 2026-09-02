@@ -1,0 +1,125 @@
+@model MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Crear Reserva";
+}
+
+<h1>Crear Reserva</h1>
+
+<form asp-action="Crear" method="post">
+
+    <input type="hidden" asp-for="inmueble_id" />
+
+    <div class="mb-3">
+        <label class="form-label">Inmueble</label>
+
+        <input type="text"
+               class="form-control"
+               value="@ViewBag.Inmueble.Direccion"
+               readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="inquilino_id" class="form-label">
+            Inquilino
+        </label>
+
+        <select asp-for="inquilino_id"
+                class="form-control">
+
+            <option value="">-- Seleccionar inquilino --</option>
+
+            @foreach (var inquilino in ViewBag.Inquilinos)
+            {
+                <option value="@inquilino.id_inquilino">
+                    @inquilino.nombre_completo - DNI: @inquilino.dni
+                </option>
+            }
+
+        </select>
+
+        <span asp-validation-for="inquilino_id"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="fecha_desde" class="form-label">
+            Fecha desde
+        </label>
+
+        <input asp-for="fecha_desde"
+               type="date"
+               class="form-control" />
+
+        <span asp-validation-for="fecha_desde"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="fecha_hasta" class="form-label">
+            Fecha hasta
+        </label>
+
+        <input asp-for="fecha_hasta"
+               type="date"
+               class="form-control" />
+
+        <span asp-validation-for="fecha_hasta"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="monto_por_dia" class="form-label">
+            Monto por día
+        </label>
+
+        <input asp-for="monto_por_dia"
+               type="number"
+               step="0.01"
+               class="form-control" />
+
+        <span asp-validation-for="monto_por_dia"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="multa" class="form-label">
+            Multa
+        </label>
+
+        <input asp-for="multa"
+               type="number"
+               step="0.01"
+               class="form-control" />
+
+        <span asp-validation-for="multa"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="estado" class="form-label">
+            Estado
+        </label>
+
+        <input asp-for="estado"
+               class="form-control"
+               readonly />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Crear Reserva
+    </button>
+
+    <a asp-controller="Inmueble"
+       asp-action="Index"
+       class="btn btn-secondary">
+        Cancelar
+    </a>
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

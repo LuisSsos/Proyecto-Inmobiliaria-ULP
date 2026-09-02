@@ -17,7 +17,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                         direccion, cupo, latitud, longitud, precio_por_dia, 
                         porcentaje_seña, estado)
                         VALUES (@propietario_id, @tipo_inmueble_id, @direccion, 
-                        @cupo, @latitud, @longitud, @precio_por_dia, @porcentaje_seña, @estado)
+                        @cupo, @latitud, @longitud, @precio_por_dia, @porcentaje_seña, @estado);
                         SELECT LAST_INSERT_ID();";
         using var command = new MySqlCommand(sql, conexion);
         command.Parameters.AddWithValue("@propietario_id", i.PropietarioId);
@@ -45,6 +45,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
     }
     public int Modificacion(Inmueble i) { 
         using var conexion = new MySqlConnection(connectionString);
+        
         string sql = @"UPDATE inmueble
                         SET propietario_id=@propietario_id, tipo_inmueble_id=@tipo_inmueble_id, 
                         direccion=@direccion, cupo=@cupo, latitud=@latitud, longitud=@longitud, 
@@ -60,7 +61,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         command.Parameters.AddWithValue("@precio_por_dia", i.PrecioPorDia);
         command.Parameters.AddWithValue("@porcentaje_seña", i.PorcentajeSeña);
         command.Parameters.AddWithValue("@estado", i.Estado);
-
+        command.Parameters.AddWithValue("@id", i.IdInmueble);   
         conexion.Open();
         return command.ExecuteNonQuery();
 
