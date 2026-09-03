@@ -14,7 +14,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, usuario_creador_id, usuario_terminador_id FROM reserva ";
+        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado FROM reserva ";
 
         using var command = new MySqlCommand(query, connection);
         using var reader = command.ExecuteReader();
@@ -36,9 +36,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
                 multa = reader.GetDecimal("multa"),
                 estado = reader.GetString("estado"),
 
-                usuario_creador_id = reader.GetInt32("usuario_creador_id"),
-
-                usuario_terminador_id = reader.IsDBNull(reader.GetOrdinal("usuario_terminador_id")) ? null : reader.GetInt32("usuario_terminador_id")
+                
             });
         }
 
@@ -74,13 +72,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
 
                 monto_por_dia = reader.GetDecimal("monto_por_dia"),
                 multa = reader.GetDecimal("multa"),
-                estado = reader.GetString("estado"),
-
-                usuario_creador_id = reader.GetInt32("usuario_creador_id"),
-
-                usuario_terminador_id = reader.IsDBNull(reader.GetOrdinal("usuario_terminador_id"))
-                    ? null
-                    : reader.GetInt32("usuario_terminador_id")
+                estado = reader.GetString("estado")
             };
         }
 
@@ -94,8 +86,8 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = @"INSERT INTO reserva (inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, usuario_creador_id, usuario_terminador_id ) 
-                    VALUES ( @inquilino_id, @inmueble_id, @fecha_desde, @fecha_hasta, @fecha_fin_real, @monto_por_dia, @multa, @estado, @usuario_creador_id, @usuario_terminador_id )";
+        var query = @"INSERT INTO reserva (inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado) 
+                    VALUES ( @inquilino_id, @inmueble_id, @fecha_desde, @fecha_hasta, @fecha_fin_real, @monto_por_dia, @multa, @estado)";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -112,13 +104,6 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         command.Parameters.AddWithValue("@monto_por_dia", reserva.monto_por_dia);
         command.Parameters.AddWithValue("@multa", reserva.multa);
         command.Parameters.AddWithValue("@estado", reserva.estado);
-        command.Parameters.AddWithValue("@usuario_creador_id", reserva.usuario_creador_id);
-
-        command.Parameters.AddWithValue(
-            "@usuario_terminador_id",
-            (object?)reserva.usuario_terminador_id ?? DBNull.Value
-        );
-
         command.ExecuteNonQuery();
     }
 
@@ -128,7 +113,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
     {
         using var connection = new MySqlConnection(connectionString);
 
-        var query = " UPDATE reserva SET inquilino_id = @inquilino_id, inmueble_id = @inmueble_id, fecha_desde = @fecha_desde, fecha_hasta = @fecha_hasta, fecha_fin_real = @fecha_fin_real, monto_por_dia = @monto_por_dia, multa = @multa, estado = @estado, usuario_terminador_id = @usuario_terminador_id WHERE id = @id";
+        var query = " UPDATE reserva SET inquilino_id = @inquilino_id, inmueble_id = @inmueble_id, fecha_desde = @fecha_desde, fecha_hasta = @fecha_hasta, fecha_fin_real = @fecha_fin_real, monto_por_dia = @monto_por_dia, multa = @multa, estado = @estado WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -146,12 +131,6 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         command.Parameters.AddWithValue("@monto_por_dia", reserva.monto_por_dia);
         command.Parameters.AddWithValue("@multa", reserva.multa);
         command.Parameters.AddWithValue("@estado", reserva.estado);
-
-        command.Parameters.AddWithValue(
-            "@usuario_terminador_id",
-            (object?)reserva.usuario_terminador_id ?? DBNull.Value
-        );
-
         command.ExecuteNonQuery();
     }
 

@@ -11,7 +11,6 @@ namespace MVC.Models
         public decimal monto_por_dia { get; set; }
         public decimal multa { get; set; }
         public string estado { get; set; } = string.Empty;
-        public int usuario_creador_id { get; set; }
-        public int? usuario_terminador_id { get; set; }
+
     }
 }
