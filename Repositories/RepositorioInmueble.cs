@@ -15,9 +15,9 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         using var conexion = new MySqlConnection(connectionString);
         string sql = @"INSERT INTO inmueble (propietario_id, tipo_inmueble_id, 
                         direccion, cupo, latitud, longitud, precio_por_dia, 
-                        porcentaje_seña, estado)
+                        porcentaje_sena, estado)
                         VALUES (@propietario_id, @tipo_inmueble_id, @direccion, 
-                        @cupo, @latitud, @longitud, @precio_por_dia, @porcentaje_seña, @estado);
+                        @cupo, @latitud, @longitud, @precio_por_dia, @porcentaje_sena, @estado);
                         SELECT LAST_INSERT_ID();";
         using var command = new MySqlCommand(sql, conexion);
         command.Parameters.AddWithValue("@propietario_id", i.PropietarioId);
@@ -27,7 +27,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         command.Parameters.AddWithValue("@latitud", i.Latitud);
         command.Parameters.AddWithValue("@longitud", i.Longitud);
         command.Parameters.AddWithValue("@precio_por_dia", i.PrecioPorDia);
-        command.Parameters.AddWithValue("@porcentaje_seña", i.PorcentajeSeña);
+        command.Parameters.AddWithValue("@porcentaje_sena", i.PorcentajeSeña);
         command.Parameters.AddWithValue("@estado", i.Estado);
         conexion.Open();
         int id = Convert.ToInt32(command.ExecuteScalar());
@@ -49,7 +49,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         string sql = @"UPDATE inmueble
                         SET propietario_id=@propietario_id, tipo_inmueble_id=@tipo_inmueble_id, 
                         direccion=@direccion, cupo=@cupo, latitud=@latitud, longitud=@longitud, 
-                        precio_por_dia=@precio_por_dia, porcentaje_seña=@porcentaje_seña, estado=@estado
+                        precio_por_dia=@precio_por_dia, porcentaje_sena=@porcentaje_sena, estado=@estado
                         WHERE id=@id;";
         using var command = new MySqlCommand(sql, conexion);
         command.Parameters.AddWithValue("@propietario_id", i.PropietarioId);
@@ -59,7 +59,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         command.Parameters.AddWithValue("@latitud", i.Latitud);
         command.Parameters.AddWithValue("@longitud", i.Longitud);
         command.Parameters.AddWithValue("@precio_por_dia", i.PrecioPorDia);
-        command.Parameters.AddWithValue("@porcentaje_seña", i.PorcentajeSeña);
+        command.Parameters.AddWithValue("@porcentaje_sena", i.PorcentajeSeña);
         command.Parameters.AddWithValue("@estado", i.Estado);
         command.Parameters.AddWithValue("@id", i.IdInmueble);   
         conexion.Open();
@@ -70,7 +70,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         var lista= new List<Inmueble>();
         using var conexion = new MySqlConnection(connectionString);
         string sql = @"SELECT i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, 
-                        i.cupo, i.latitud, i.longitud, i.precio_por_dia, i.porcentaje_seña, i.estado,
+                        i.cupo, i.latitud, i.longitud, i.precio_por_dia, i.porcentaje_sena, i.estado,
                         p.nombre AS PropietarioNombre, p.dni_cuit,
                         t.nombre AS TipoNombre
                         FROM inmueble i
@@ -91,7 +91,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                 Latitud=reader.GetDecimal("latitud"),
                 Longitud=reader.GetDecimal("longitud"),
                 PrecioPorDia=reader.GetDecimal("precio_por_dia"),
-                PorcentajeSeña=reader.GetDecimal("porcentaje_seña"),
+                PorcentajeSeña=reader.GetDecimal("porcentaje_sena"),
                 Estado=reader.GetString("estado"),
 
                 Titular =  new Propietario
