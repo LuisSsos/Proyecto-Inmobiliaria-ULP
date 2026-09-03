@@ -49,7 +49,7 @@ CREATE TABLE `inmueble` (
   `latitud` decimal(10,0) DEFAULT NULL,
   `longitud` decimal(10,0) DEFAULT NULL,
   `precio_por_dia` decimal(10,0) DEFAULT NULL,
-  `porcentaje_seña` decimal(10,0) DEFAULT NULL,
+  `porcentaje_sena` decimal(10,0) DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -57,7 +57,7 @@ CREATE TABLE `inmueble` (
 -- Volcado de datos para la tabla `inmueble`
 --
 
-INSERT INTO `inmueble` (`id`, `propietario_id`, `tipo_inmueble_id`, `direccion`, `cupo`, `latitud`, `longitud`, `precio_por_dia`, `porcentaje_seña`, `estado`) VALUES
+INSERT INTO `inmueble` (`id`, `propietario_id`, `tipo_inmueble_id`, `direccion`, `cupo`, `latitud`, `longitud`, `precio_por_dia`, `porcentaje_sena`, `estado`) VALUES
 (1, 4, 1, 'Barrio Dabal', 1, 12, 12, 21, 10, 'Disponible');
 
 -- --------------------------------------------------------

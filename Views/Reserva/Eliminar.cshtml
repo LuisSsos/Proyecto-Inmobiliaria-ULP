@@ -1,0 +1,23 @@
+@model MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Eliminar Reserva";
+}
+
+<h1>Eliminar Reserva</h1>
+
+<p>¿Estás seguro que querés eliminar esta reserva?</p>
+
+<div>
+    <p><strong>Fecha desde:</strong> @Model.fecha_desde.ToString("dd/MM/yyyy")</p>
+    <p><strong>Fecha hasta:</strong> @Model.fecha_hasta.ToString("dd/MM/yyyy")</p>
+    <p><strong>Monto por día:</strong> $@Model.monto_por_dia</p>
+    <p><strong>Estado:</strong> @Model.estado</p>
+</div>
+
+<form asp-action="Eliminar" method="post">
+    <input type="hidden" asp-for="id_reserva" />
+
+    <button type="submit">Sí, eliminar</button>
+    <a asp-action="Index">Cancelar</a>
+</form>

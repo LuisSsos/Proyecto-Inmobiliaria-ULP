@@ -70,6 +70,15 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 ---
 
 ## ⚙️ Estado Actual del Desarrollo
-* Configuración de la base de datos MySQL y la inyección de dependencias (`RepositorioBase`).
-* Modelos, repositorios y controladores desarrollados para las entidades **Propietario** e **Inquilino**.
-* Vistas Razor (CRUD) que permiten listar, crear, editar y eliminar registros desde la interfaz web.
+* Configuración de la base de datos **MySQL** y de la inyección de dependencias mediante RepositorioBase.
+* Desarrollo de **modelos, repositorios y controladores** para las entidades:
+  * **Propietario**
+  * **Inquilino**
+  * **Inmueble**
+  * **Reserva**
+  * **TipoInmueble**
+  * **Usuario**
+* Implementación de vistas Razor con operaciones CRUD para permitir listar, crear, editar y eliminar registros de **Propietarios, Inquilinos, Inmuebles, Reservas y Usuarios.**
+* La entidad Usuario se encuentra implementada de forma preliminar, pero actualmente **no es accesible desde la interfaz web.**
+*Implementación de las funcionalidades de **Editar y Eliminar** para la entidad Reserva.
+ 

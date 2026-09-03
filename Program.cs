@@ -10,6 +10,7 @@ builder.Services.AddScoped<MVC.Repositories.IRepositorioInmueble, MVC.Repositori
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 var app = builder.Build();
+app.UseMiddleware<MVC.Middleware.ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

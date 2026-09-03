@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 namespace MVC.Models
+
 {
-    public class Reserva
+    public class Reserva : IValidatableObject
     {
         public int id_reserva { get; set; }
         public int inquilino_id { get; set; }
@@ -12,5 +14,23 @@ namespace MVC.Models
         public decimal multa { get; set; }
         public string estado { get; set; } = string.Empty;
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (fecha_desde >= fecha_hasta)
+            {
+                yield return new ValidationResult(
+                    "La fecha desde debe ser anterior a la fecha hasta.",
+                    new[] { nameof(fecha_desde), nameof(fecha_hasta) }
+                );
+            }
+
+            if (fecha_desde < DateTime.Today)
+            {
+                yield return new ValidationResult(
+                    "La fecha desde no puede ser anterior a hoy.",
+                    new[] { nameof(fecha_desde) }
+                );
+            }
+        }
     }
 }

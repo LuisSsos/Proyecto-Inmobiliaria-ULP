@@ -6,12 +6,6 @@ namespace MVC.Controllers;
 
 public class HomeController : Controller
 {
-    // hac  er la db
-    //hacer un controlador por cada entidad
-    //hacer el index de propietario: devolver la lista de props
-    //despues del model de propietario hacer el repositorio de propietario
-    //instalar el nag  de sql ---> hacer build para los cambios 
-
     public IActionResult Index()
     {
         return View();
@@ -23,8 +17,9 @@ public class HomeController : Controller
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(string? mensaje)
     {
+        ViewBag.Mensaje = mensaje ?? "Ocurrió un error inesperado.";
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

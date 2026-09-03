@@ -1,0 +1,61 @@
+@model MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Editar Reserva";
+}
+
+<h1>Editar Reserva</h1>
+
+<div asp-validation-summary="All" style="color:red"></div>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="id_reserva" />
+
+    <div>
+        <label>Inquilino</label>
+        <select asp-for="inquilino_id">
+            @foreach (var inquilino in (List<MVC.Models.Inquilino>)ViewBag.Inquilinos)
+            {
+                <option value="@inquilino.id_inquilino">@inquilino.nombre_completo</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Inmueble</label>
+        <select asp-for="inmueble_id">
+            @foreach (var inmueble in (IList<MVC.Models.Inmueble>)ViewBag.Inmuebles)
+            {
+                <option value="@inmueble.IdInmueble">@inmueble.Direccion</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Fecha desde</label>
+        <input asp-for="fecha_desde" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div>
+        <label>Fecha hasta</label>
+        <input asp-for="fecha_hasta" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <div>
+        <label>Monto por día</label>
+        <input asp-for="monto_por_dia" />
+    </div>
+
+    <div>
+        <label>Estado</label>
+        <select asp-for="estado">
+            <option value="Disponible"> Disponible</option>
+            <option value="Pendiente"> Pendiente</option>
+            <option value="En curso"> En curso</option>
+            <option value="Cancelada"> Cancelada</option>
+        </select>
+    </div>
+
+    <button type="submit">Guardar cambios</button>
+    <a asp-action="Index">Cancelar</a>
+</form>

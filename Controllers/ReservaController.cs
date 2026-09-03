@@ -21,6 +21,11 @@ public class ReservaController : Controller
     }
 
 
+    public IActionResult ProbarError()
+    {
+        throw new Exception("Esto es una prueba del middleware de excepciones.");
+    }
+
     // Listado
     public IActionResult Index()
     {
@@ -87,6 +92,14 @@ public class ReservaController : Controller
             return View(reserva);
         }
 
+        if (repositorioReserva.ExisteSolapamiento(reserva.inmueble_id, reserva.fecha_desde, reserva.fecha_hasta))
+        {
+            ModelState.AddModelError("", "Ya existe otra reserva para este inmueble en esas fechas.");
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
+            ViewBag.Inmueble = inmueble;
+            return View(reserva);
+        }
+
         reserva.monto_por_dia = inmueble.PrecioPorDia;
         reserva.estado = "Pendiente";
         reserva.fecha_fin_real = null;
@@ -95,6 +108,7 @@ public class ReservaController : Controller
 
         return RedirectToAction("Index", "Inmueble");
     }
+
     // Modificar get
     [HttpGet]
     public IActionResult Editar(int id)
@@ -112,6 +126,7 @@ public class ReservaController : Controller
         return View(reserva);
     }
 
+
     // Modificar post
     [HttpPost]
     public IActionResult Editar(Reserva reserva)
@@ -120,7 +135,14 @@ public class ReservaController : Controller
         {
             ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
             ViewBag.Inmuebles = repositorioInmueble.GetAll();
+            return View(reserva);
+        }
 
+        if (repositorioReserva.ExisteSolapamiento(reserva.inmueble_id, reserva.fecha_desde, reserva.fecha_hasta, reserva.id_reserva))
+        {
+            ModelState.AddModelError("", "Ya existe otra reserva para este inmueble en esas fechas.");
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
+            ViewBag.Inmuebles = repositorioInmueble.GetAll();
             return View(reserva);
         }
 
@@ -143,7 +165,7 @@ public class ReservaController : Controller
     }
 
     // Eliminar post
-    [HttpPost]
+    [HttpPost, ActionName("Eliminar")]
     public IActionResult EliminarConfirmado(int id)
     {
         repositorioReserva.Eliminar(id);
@@ -162,7 +184,7 @@ public class ReservaController : Controller
         return View(reserva);
     }
 
-    [HttpPost]
+    [HttpPost, ActionName("Cancelar")]
     public IActionResult CancelarConfirmado(int id)
     {
         var reserva = repositorioReserva.ObtenerPorId(id);

@@ -1,0 +1,17 @@
+@model MVC.Models.ErrorViewModel
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error</h1>
+<h2 class="text-danger">Ocurrió un problema al procesar tu solicitud.</h2>
+
+<p>@ViewBag.Mensaje</p>
+
+@if (Model?.ShowRequestId == true)
+{
+    <p><strong>Request Id:</strong> @Model.RequestId</p>
+}
+
+<a asp-controller="Home" asp-action="Index">Volver al inicio</a>
