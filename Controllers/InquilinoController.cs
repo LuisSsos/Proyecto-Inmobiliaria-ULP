@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
+using MySqlConnector;
+
 
 namespace MVC.Controllers;
 
@@ -125,6 +127,7 @@ public class InquilinoController : Controller
         }
     }
 
+    [HttpGet]
     public IActionResult Eliminar(int id)
     {
         try
@@ -138,14 +141,18 @@ public class InquilinoController : Controller
 
             return View(inquilino);
         }
+        catch (MySqlException ex)
+        {
+            TempData["Error"] = $"Error al obtener el inquilino (MySQL {ex.Number}).";
+            return RedirectToAction(nameof(Index));
+        }
         catch (Exception)
         {
-            return StatusCode(
-                500,
-                "Ocurrió un error al obtener el inquilino."
-            );
+            TempData["Error"] = "Ocurrió un error al obtener el inquilino.";
+            return RedirectToAction(nameof(Index));
         }
     }
+
 
     [HttpPost, ActionName("Eliminar")]
     public IActionResult EliminarConfirmado(int id)
@@ -154,14 +161,27 @@ public class InquilinoController : Controller
         {
             repositorio.Eliminar(id);
 
-            return RedirectToAction("Index");
+            TempData["Success"] = "El inquilino fue eliminado correctamente.";
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex) when (ex.Number == 1451)
+        {
+            TempData["Error"] = "No puedes eliminar un inquilino que tenga reservas asociadas.";
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex)
+        {
+            TempData["Error"] = $"Error MySQL ({ex.Number}): No se pudo completar la eliminación.";
+
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception)
         {
-            return StatusCode(
-                500,
-                "Ocurrió un error al intentar eliminar el inquilino."
-            );
+            TempData["Error"] = "Ocurrió un error inesperado al eliminar el inquilino.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -12,6 +12,12 @@
     <p><!--El asp.action es un metodo para apuntar a cierto método del controlador-->
         <a asp-action="Crear">+ Nuevo propietario</a>
     </p>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
     <table border="1">
         <thead>
             <tr>
@@ -31,7 +37,7 @@
                     <td>@propietario.DniCuit</td>
                     <td>@propietario.Email</td>
                     <td>@propietario.Telefono</td>
-                    
+
                     <td>
                         <a asp-action="Editar" asp-route-id="@propietario.IdPropietario">Editar</a> |
                         <a asp-action="Eliminar" asp-route-id="@propietario.IdPropietario">Eliminar</a>

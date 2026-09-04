@@ -135,18 +135,25 @@ public class PropietarioController : Controller
     {
         try
         {
-            var propietario = repositorio.GetAll().FirstOrDefault(p => p.IdPropietario == id);
+            var propietario = repositorio.GetAll()
+                .FirstOrDefault(p => p.IdPropietario == id);
+
             if (propietario == null)
             {
-                TempData["Error"] = $"No se encontró el propietario solicitado.";
+                TempData["Error"] = "No se encontró el propietario solicitado.";
                 return RedirectToAction(nameof(Index));
             }
 
             return View(propietario);
         }
-        catch (Exception ex)
+        catch (MySqlException ex)
         {
-            TempData["Error"] = $"Error al intentar cargar la confirmación de baja: {ex.Message}";
+            TempData["Error"] = $"Error al obtener el propietario (MySQL {ex.Number}).";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception)
+        {
+            TempData["Error"] = "Ocurrió un error al obtener el propietario.";
             return RedirectToAction(nameof(Index));
         }
     }
@@ -158,22 +165,27 @@ public class PropietarioController : Controller
         try
         {
             repositorio.Baja(id);
+
             TempData["Success"] = "El propietario fue eliminado correctamente.";
+
             return RedirectToAction(nameof(Index));
         }
         catch (MySqlException ex) when (ex.Number == 1451)
         {
-            TempData["Error"] = "Operación denegada: El propietario tiene inmuebles asociados en la base de datos.";
+            TempData["Error"] = "No puedes eliminar un propietario que tenga inmuebles asociados.";
+
             return RedirectToAction(nameof(Index));
         }
         catch (MySqlException ex)
         {
             TempData["Error"] = $"Error MySQL ({ex.Number}): No se pudo completar la eliminación.";
+
             return RedirectToAction(nameof(Index));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            TempData["Error"] = $"Falla inesperada al eliminar: {ex.Message}";
+            TempData["Error"] = "Ocurrió un error inesperado al eliminar el propietario.";
+
             return RedirectToAction(nameof(Index));
         }
     }

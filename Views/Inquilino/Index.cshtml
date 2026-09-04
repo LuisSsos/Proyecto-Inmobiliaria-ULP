@@ -12,6 +12,12 @@
     <p>
         <a asp-action="Create">+ Nuevo inquilino</a>
     </p>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
     <table border="1">
         <thead>
             <tr>
