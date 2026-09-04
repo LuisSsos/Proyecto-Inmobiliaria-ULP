@@ -5,21 +5,39 @@
 <div asp-validation-summary="All" style="color:red"></div>
 
 <form asp-action="Create" method="post">
+
     <div>
-        <label>Nombre completo</label>
+        <label asp-for="nombre_completo">Nombre completo</label>
         <input asp-for="nombre_completo" />
+        <span asp-validation-for="nombre_completo" style="color:red"></span>
     </div>
+
     <div>
-        <label>DNI</label>
+        <label asp-for="dni">DNI</label>
         <input asp-for="dni" />
+        <span asp-validation-for="dni" style="color:red"></span>
     </div>
+
     <div>
-        <label>Email</label>
+        <label asp-for="email">Email</label>
         <input asp-for="email" />
+        <span asp-validation-for="email" style="color:red"></span>
     </div>
+
     <div>
-        <label>Teléfono</label>
+        <label asp-for="telefono">Teléfono</label>
         <input asp-for="telefono" />
+        <span asp-validation-for="telefono" style="color:red"></span>
     </div>
+
     <button type="submit">Guardar</button>
+
+    <a asp-action="Index">Volver</a>
+
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
