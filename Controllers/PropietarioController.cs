@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
+using MySqlConnector;
 
 namespace MVC.Controllers;
 
@@ -15,8 +16,21 @@ public class PropietarioController : Controller
 
     public IActionResult Index()
     {
-        var lista = repositorio.GetAll();
-        return View(lista);
+        try
+        {
+            var lista = repositorio.GetAll();
+            return View(lista);
+        }
+        catch (MySqlException ex)
+        {
+            TempData["Error"] = $"Error de conexión con la base de datos MySQL (Código: {ex.Number}).";
+            return View(new List<Propietario>());
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error al recuperar propietarios: {ex.Message}";
+            return View(new List<Propietario>());
+        }
     }
 
     [HttpGet]
@@ -32,38 +46,56 @@ public class PropietarioController : Controller
         {
             return View(propietario);
         }
-
-        if (repositorio.ExisteDniCuit(propietario.DniCuit))
+        try
         {
-            ModelState.AddModelError("DniCuit", "Ya existe un propietario registrado con ese DNI/CUIT.");
+            if (repositorio.ExisteDniCuit(propietario.DniCuit))
+            {
+                ModelState.AddModelError("DniCuit", "El DNI/CUIT ingresado ya está registrado a nombre de otro propietario.");
+                return View(propietario);
+            }
+
+            repositorio.Alta(propietario);
+            TempData["Success"] = "Propietario registrado con éxito.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex) when (ex.Number == 1062)
+        {
+            ModelState.AddModelError(string.Empty, "Error: Ya existe un registro duplicado en el sistema.");
+            return View(propietario);
+        }
+        catch (MySqlException ex)
+        {
+            ModelState.AddModelError(string.Empty, $"Error de base de datos ({ex.Number}): {ex.Message}");
+            return View(propietario);
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, $"Ocurrió una falla inesperada: {ex.Message}");
             return View(propietario);
         }
 
-        repositorio.Alta(propietario);
-        return RedirectToAction("Index");
     }
 
     [HttpGet]
     public IActionResult Editar(int id)
     {
-        Propietario? propietarioEncontrado = null;
-        var lista = repositorio.GetAll();
-
-        foreach (var p in lista)
+        try
         {
-            if (p.IdPropietario == id)
+            var propietario = repositorio.GetAll().FirstOrDefault(p => p.IdPropietario == id);
+            if (propietario == null)
             {
-                propietarioEncontrado = p;
-                break;
+                TempData["Error"] = $"No se encontró el propietario con el ID {id}.";
+                return RedirectToAction(nameof(Index));
             }
-        }
 
-        if (propietarioEncontrado == null)
+            return View(propietario);
+        }
+        catch (Exception ex)
         {
+            TempData["Error"] = $"Error al obtener datos: {ex.Message}";
             return RedirectToAction(nameof(Index));
         }
-
-        return View(propietarioEncontrado);
+        ;
     }
 
     [HttpPost]
@@ -74,43 +106,75 @@ public class PropietarioController : Controller
             return View(propietario);
         }
 
-        if (repositorio.ExisteDniCuit(propietario.DniCuit, propietario.IdPropietario))
+        try
         {
-            ModelState.AddModelError("DniCuit", "Ya existe otro propietario registrado con ese DNI/CUIT.");
+            if (repositorio.ExisteDniCuit(propietario.DniCuit, propietario.IdPropietario))
+            {
+                ModelState.AddModelError("DniCuit", "El DNI/CUIT pertenece a otro propietario registrado.");
+                return View(propietario);
+            }
+
+            repositorio.Modificacion(propietario);
+            TempData["Success"] = "Datos del propietario actualizados correctamente.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex)
+        {
+            ModelState.AddModelError(string.Empty, $"Error de base de datos al actualizar ({ex.Number}): {ex.Message}");
             return View(propietario);
         }
-
-        repositorio.Modificacion(propietario);
-        return RedirectToAction("Index");
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, $"Ocurrió un error inesperado al editar: {ex.Message}");
+            return View(propietario);
+        }
     }
 
     [HttpGet]
     public IActionResult Eliminar(int id)
     {
-        Propietario? propietarioEncontrado = null;
-        var lista = repositorio.GetAll();
-
-        foreach (var p in lista)
+        try
         {
-            if (p.IdPropietario == id)
+            var propietario = repositorio.GetAll().FirstOrDefault(p => p.IdPropietario == id);
+            if (propietario == null)
             {
-                propietarioEncontrado = p;
-                break;
+                TempData["Error"] = $"No se encontró el propietario solicitado.";
+                return RedirectToAction(nameof(Index));
             }
-        }
 
-        if (propietarioEncontrado == null)
+            return View(propietario);
+        }
+        catch (Exception ex)
         {
+            TempData["Error"] = $"Error al intentar cargar la confirmación de baja: {ex.Message}";
             return RedirectToAction(nameof(Index));
         }
-
-        return View(propietarioEncontrado);
     }
 
     [HttpPost, ActionName("Eliminar")]
+    [ValidateAntiForgeryToken]
     public IActionResult EliminarConfirmado(int id)
     {
-        repositorio.Baja(id);
-        return RedirectToAction("Index");
+        try
+        {
+            repositorio.Baja(id);
+            TempData["Success"] = "El propietario fue eliminado correctamente.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex) when (ex.Number == 1451)
+        {
+            TempData["Error"] = "Operación denegada: El propietario tiene inmuebles asociados en la base de datos.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (MySqlException ex)
+        {
+            TempData["Error"] = $"Error MySQL ({ex.Number}): No se pudo completar la eliminación.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Falla inesperada al eliminar: {ex.Message}";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
