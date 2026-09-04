@@ -51,7 +51,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, usuario_creador_id, usuario_terminador_id FROM reserva WHERE id = @id";
+        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado FROM reserva WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", id);
