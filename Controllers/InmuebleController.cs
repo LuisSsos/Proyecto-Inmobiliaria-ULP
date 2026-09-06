@@ -9,15 +9,18 @@ public class InmuebleController : Controller
     private readonly IRepositorioInmueble repoInmueble;
     private readonly IRepositorioPropietario repoProp;
     private readonly IRepositorioTipoInmueble repoTipo;
+    private readonly IRepositorioImagenInmueble repoImagen;
 
     public InmuebleController(
         IRepositorioInmueble repoInmueble,
         IRepositorioPropietario repoProp,
-        IRepositorioTipoInmueble repoTipo)
+        IRepositorioTipoInmueble repoTipo,
+        IRepositorioImagenInmueble repoImagen)
     {
         this.repoInmueble = repoInmueble;
         this.repoProp = repoProp;
         this.repoTipo = repoTipo;
+        this.repoImagen = repoImagen;
     }
 
     // LISTAR
@@ -27,6 +30,20 @@ public class InmuebleController : Controller
         try
         {
             var lista = repoInmueble.GetAll();
+
+            // busca si tiene una foto para mostrar en el listado
+            var imagenesPorInmueble = new Dictionary<int, ImagenInmueble>();
+            foreach (var inmueble in lista)
+            {
+                var imagenes = repoImagen.ObtenerPorInmueble(inmueble.IdInmueble);
+                var portada = imagenes.FirstOrDefault(img => img.esPortada) ?? imagenes.FirstOrDefault();
+                if (portada != null)
+                {
+                    imagenesPorInmueble[inmueble.IdInmueble] = portada;
+                }
+            }
+            ViewBag.ImagenesPorInmueble = imagenesPorInmueble;
+
             return View(lista);
         }
         catch (Exception)

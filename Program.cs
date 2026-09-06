@@ -9,6 +9,7 @@ builder.Services.AddScoped<MVC.Repositories.IRepositorioTipoInmueble, MVC.Reposi
 builder.Services.AddScoped<MVC.Repositories.IRepositorioInmueble, MVC.Repositories.RepositorioInmueble>();
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
+builder.Services.AddScoped<IRepositorioImagenInmueble, RepositorioImagenInmueble>();
 var app = builder.Build();
 app.UseMiddleware<MVC.Middleware.ExceptionMiddleware>();
 

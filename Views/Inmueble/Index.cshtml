@@ -20,6 +20,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>Imagen</th>
             <th>Dirección</th>
             <th>Cupo</th>
             <th>Precio por día</th>
@@ -33,8 +34,21 @@
     <tbody>
         @foreach (var item in Model)
         {
+            var imagenes = ViewBag.ImagenesPorInmueble as Dictionary<int, MVC.Models.ImagenInmueble>;
+            MVC.Models.ImagenInmueble? portada = null;
+            imagenes?.TryGetValue(item.IdInmueble, out portada);
 
             <tr>
+                <td>
+                    @if (portada != null)
+                    {
+                        <img src="@portada.url" width="80" />
+                    }
+                    else
+                    {
+                        <span>Sin imagen</span>
+                    }
+                </td>
                 <td>@item.Direccion</td>
                 <td>@item.Cupo</td>
                 <td>@item.PrecioPorDia.ToString("C")</td>
@@ -44,8 +58,9 @@
                 <td>@(item.Tipo != null ? item.Tipo.Nombre : "Sin especificar")</td>
                 <td>
                     <a asp-action="Editar" asp-route-id="@item.IdInmueble">Editar</a> |
-                    <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a>|
-                    <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble"> Reservar </a>
+                    <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a> |
+                    <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble">Reservar</a> |
+                    <a asp-controller="ImagenInmueble" asp-action="Index" asp-route-inmuebleId="@item.IdInmueble">Ver imágenes</a>
                 </td>
             </tr>
         }

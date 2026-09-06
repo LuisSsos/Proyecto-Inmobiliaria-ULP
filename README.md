@@ -81,4 +81,10 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 * Implementación de vistas Razor con operaciones CRUD para permitir listar, crear, editar y eliminar registros de **Propietarios, Inquilinos, Inmuebles, Reservas y Usuarios.**
 * La entidad Usuario se encuentra implementada de forma preliminar, pero actualmente **no es accesible desde la interfaz web.**
 *Implementación de las funcionalidades de **Editar y Eliminar** para la entidad Reserva.
- 
+* Implementación de validaciones de negocio para la entidad **Reserva**:
+  * No se permite guardar una reserva con fecha de inicio posterior o igual a la fecha de fin.
+  * No se permite cargar una reserva con fecha de inicio anterior al dia actual.
+  * No se permite reservar un mismo inmueble en fechas que se superpongan con otra reserva ya existente.
+* Implementación de un **middleware de manejo de excepciones** a nivel global, que captura cualquier error no controlado de la aplicación y redirige a una vista de error personalizada, evitando mostrar el detalle técnico al usuario.
+* Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante integración con el servicio externo **Cloudinary**, guardando en la base de datos la referencia (URL) de cada imagen subida.
+* Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.

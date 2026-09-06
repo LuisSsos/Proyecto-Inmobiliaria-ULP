@@ -1,0 +1,14 @@
+@model List<MVC.Models.ImagenInmueble>
+
+<h2>Imágenes del inmueble</h2>
+
+<a asp-action="Crear" asp-route-inmuebleId="@ViewBag.InmuebleId">Agregar imagen</a>
+
+@foreach (var imagen in Model)
+{
+    <div>
+        <img src="@imagen.url" width="150" />
+        <p>@(imagen.esPortada ? "Portada" : "")</p>
+        <a asp-action="Eliminar" asp-route-id="@imagen.id_imagenInmueble">Eliminar</a>
+    </div>
+}

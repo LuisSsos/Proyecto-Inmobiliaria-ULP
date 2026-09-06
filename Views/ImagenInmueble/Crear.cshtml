@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Agregar Imagen";
+}
+
+<h2>Agregar Imagen</h2>
+
+<div asp-validation-summary="All" style="color:red"></div>
+
+<form asp-action="Crear" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="inmuebleId" value="@ViewBag.InmuebleId" />
+
+    <div>
+        <label>Imagen</label>
+        <input type="file" name="archivo" accept="image/*" />
+    </div>
+
+    <div>
+        <label>
+            <input type="checkbox" name="esPortada" value="true" />
+            Marcar como portada
+        </label>
+    </div>
+
+    <button type="submit">Subir</button>
+</form>

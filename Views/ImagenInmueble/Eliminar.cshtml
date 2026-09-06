@@ -1,0 +1,13 @@
+@model MVC.Models.ImagenInmueble
+
+<h2>Eliminar Imagen</h2>
+
+<img src="@Model.url" width="200" />
+
+<p>¿Estás seguro que querés eliminar esta imagen?</p>
+
+<form asp-action="Eliminar" method="post">
+    <input type="hidden" name="id" value="@Model.id_imagenInmueble" />
+    <button type="submit">Sí, eliminar</button>
+    <a asp-action="Index" asp-route-inmuebleId="@Model.inmueble_id">Cancelar</a>
+</form>
