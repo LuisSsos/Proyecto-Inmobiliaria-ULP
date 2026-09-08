@@ -6,4 +6,5 @@ public class Pago
     public DateTime fecha_pago {get; set;}
     public decimal importe {get; set;}
     public string estado {get; set;} = string.Empty;
+    public bool Activo { get; set; } = true;
 }

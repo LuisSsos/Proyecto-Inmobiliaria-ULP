@@ -18,7 +18,7 @@ namespace MVC.Models
         public string Direccion { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El cupo de personas es obligatorio")]
-        [Range(1, 20, ErrorMessage = "El cupo de inquilinos debe ser de al menos 1 persona")]
+        [Range(1, 20, ErrorMessage = "El cupo de inquilinos debe ser de entre 1 y 20")]
         public int Cupo { get; set; }
 
         [Required(ErrorMessage = "La latitud geográfica es obligatoria")]
@@ -41,7 +41,7 @@ namespace MVC.Models
         [StringLength(50, ErrorMessage = "El estado no puede superar los 50 caracteres")]
         public string Estado { get; set; } = string.Empty;
 
-
+        public bool Activo { get; set; } = true;
         public Propietario? Titular { get; set; }
         public TipoInmueble? Tipo { get; set; }
 

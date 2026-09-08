@@ -23,5 +23,7 @@ namespace MVC.Models
         public string rol { get; set; } = string.Empty;
 
         public string? avatar { get; set; }
+
+        public bool Activo { get; set; } = true;
     }
 }

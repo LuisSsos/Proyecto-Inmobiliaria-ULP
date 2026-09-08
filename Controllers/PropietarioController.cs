@@ -8,10 +8,12 @@ namespace MVC.Controllers;
 public class PropietarioController : Controller
 {
     private readonly IRepositorioPropietario repositorio;
+    private readonly IRepositorioInmueble repoInmueble;
 
-    public PropietarioController(IRepositorioPropietario repositorio)
+    public PropietarioController(IRepositorioPropietario repositorio, IRepositorioInmueble repoInmueble)
     {
         this.repositorio = repositorio;
+        this.repoInmueble = repoInmueble;
     }
 
     public IActionResult Index()
@@ -135,8 +137,7 @@ public class PropietarioController : Controller
     {
         try
         {
-            var propietario = repositorio.GetAll()
-                .FirstOrDefault(p => p.IdPropietario == id);
+            var propietario = repositorio.GetAll().FirstOrDefault(p => p.IdPropietario == id);
 
             if (propietario == null)
             {
@@ -144,12 +145,14 @@ public class PropietarioController : Controller
                 return RedirectToAction(nameof(Index));
             }
 
+            bool tieneInmuebles = repoInmueble.GetAll().Any(i => i.PropietarioId == id);
+            if (tieneInmuebles)
+            {
+                TempData["Error"] = "No se puede dar de baja el propietario porque tiene inmuebles asociados.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(propietario);
-        }
-        catch (MySqlException ex)
-        {
-            TempData["Error"] = $"Error al obtener el propietario (MySQL {ex.Number}).";
-            return RedirectToAction(nameof(Index));
         }
         catch (Exception)
         {
@@ -164,28 +167,22 @@ public class PropietarioController : Controller
     {
         try
         {
+            // Doble validación previa a la baja
+            bool tieneInmuebles = repoInmueble.GetAll().Any(i => i.PropietarioId == id);
+            if (tieneInmuebles)
+            {
+                TempData["Error"] = "No se puede dar de baja el propietario porque tiene inmuebles asociados.";
+                return RedirectToAction(nameof(Index));
+            }
+
             repositorio.Baja(id);
-
-            TempData["Success"] = "El propietario fue eliminado correctamente.";
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (MySqlException ex) when (ex.Number == 1451)
-        {
-            TempData["Error"] = "No puedes eliminar un propietario que tenga inmuebles asociados.";
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (MySqlException ex)
-        {
-            TempData["Error"] = $"Error MySQL ({ex.Number}): No se pudo completar la eliminación.";
+            TempData["Success"] = "El propietario fue dado de baja correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
         catch (Exception)
         {
             TempData["Error"] = "Ocurrió un error inesperado al eliminar el propietario.";
-
             return RedirectToAction(nameof(Index));
         }
     }

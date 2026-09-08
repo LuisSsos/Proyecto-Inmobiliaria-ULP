@@ -10,8 +10,8 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
     public int Alta(Propietario p)
     {
         using var connection = new MySqlConnection(connectionString);
-        string sql = @"INSERT INTO propietario (nombre, dni_cuit, email, telefono)
-                       VALUES (@nombre, @dni_cuit, @email, @telefono);
+        string sql = @"INSERT INTO propietario (nombre, dni_cuit, email, telefono, activo)
+                       VALUES (@nombre, @dni_cuit, @email, @telefono, 1);
                        SELECT LAST_INSERT_ID();";
         using var command = new MySqlCommand(sql, connection);
         command.Parameters.AddWithValue("@nombre", p.Nombre);
@@ -24,7 +24,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         return id;
     }
 
-    public int Baja(int id)
+    public int BajaFisica(int id)
     {
         using var connection = new MySqlConnection(connectionString);
         string sql = "DELETE FROM propietario WHERE id = @id";
@@ -34,12 +34,21 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         return command.ExecuteNonQuery();
     }
 
+    public int Baja(int id)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        string sql = "UPDATE propietario SET activo = 0 WHERE id = @id";
+        using var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
+        connection.Open();
+        return command.ExecuteNonQuery();
+    }
     public int Modificacion(Propietario p)
     {
         using var connection = new MySqlConnection(connectionString);
         string sql = @"UPDATE propietario 
                        SET nombre = @nombre, dni_cuit = @dni_cuit, 
-                           email = @email, telefono = @telefono
+                           email = @email, telefono = @telefono, activo = @activo
                        WHERE id = @id";
         using var command = new MySqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", p.IdPropietario);
@@ -47,6 +56,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         command.Parameters.AddWithValue("@dni_cuit", p.DniCuit);
         command.Parameters.AddWithValue("@email", (object?)p.Email ?? DBNull.Value);
         command.Parameters.AddWithValue("@telefono", (object?)p.Telefono ?? DBNull.Value);
+        command.Parameters.AddWithValue("@activo", p.Activo);
         connection.Open();
         return command.ExecuteNonQuery();
     }
@@ -57,7 +67,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var sql = "SELECT COUNT(*) FROM propietario WHERE dni_cuit = @dniCuit AND id != @idExcluir";
+        var sql = "SELECT COUNT(*) FROM propietario WHERE dni_cuit = @dniCuit AND id != @idExcluir AND activo = 1";
         using var command = new MySqlCommand(sql, connection);
         command.Parameters.AddWithValue("@dniCuit", dniCuit);
         command.Parameters.AddWithValue("@idExcluir", idExcluir);
@@ -70,7 +80,8 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
     {
         var lista = new List<Propietario>();
         using var connection = new MySqlConnection(connectionString);
-        string sql = @"SELECT id, nombre, dni_cuit, email, telefono FROM propietario";
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono, activo FROM propietario
+                        WHERE activo=1";
         using var command = new MySqlCommand(sql, connection);
         connection.Open();
         using var reader = command.ExecuteReader();
@@ -82,7 +93,55 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
                 Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
                 DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
                 Email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
-                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                Activo = reader.GetBoolean("activo")
+            });
+        }
+        return lista;
+    }
+    public Propietario? GetById(int id)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono, activo 
+                       FROM propietario 
+                       WHERE id = @id AND activo = 1";
+        using var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
+        connection.Open();
+        using var reader = command.ExecuteReader();
+        if (reader.Read())
+        {
+            return new Propietario
+            {
+                IdPropietario = reader.GetInt32("id"),
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
+                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
+                Email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                Activo = reader.GetBoolean("activo")
+            };
+        }
+        return null;
+    }
+
+    public IList<Propietario> GetAllIncludingInactive()
+    {
+        var lista = new List<Propietario>();
+        using var connection = new MySqlConnection(connectionString);
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono, activo FROM propietario";
+        using var command = new MySqlCommand(sql, connection);
+        connection.Open();
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(new Propietario
+            {
+                IdPropietario = reader.GetInt32("id"),
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
+                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
+                Email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                Activo = reader.GetBoolean("activo")
             });
         }
         return lista;

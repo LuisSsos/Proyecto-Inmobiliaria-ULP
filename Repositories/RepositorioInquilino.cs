@@ -14,7 +14,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 
         using var connection = new MySqlConnection(connectionString);
 
-        var query = "SELECT id, nombre_completo, dni, email, telefono FROM inquilino";
+        var query = "SELECT id, nombre_completo, dni, email, telefono, activo FROM inquilino WHERE activo = 1";
         using var command = new MySqlCommand(query, connection);
         connection.Open();
         using var reader = command.ExecuteReader();
@@ -27,7 +27,8 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
                 dni = reader.IsDBNull(reader.GetOrdinal("dni")) ? "" : reader.GetString("dni"),
                 nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo")) ? "" : reader.GetString("nombre_completo"),
                 email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
-                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
+                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                activo = reader.GetBoolean("activo")
             };
             lista.Add(inquilino);
         }
@@ -41,7 +42,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT id, nombre_completo, dni, email, telefono FROM inquilino WHERE id = @id";
+        var query = "SELECT id, nombre_completo, dni, email, telefono, activo FROM inquilino WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", id);
@@ -56,7 +57,9 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
                 nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo")) ? "" : reader.GetString("nombre_completo"),
                 dni = reader.IsDBNull(reader.GetOrdinal("dni")) ? "" : reader.GetString("dni"),
                 email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
-                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono")
+                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                activo = reader.GetBoolean("activo")
+
             };
         }
 
@@ -69,7 +72,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT COUNT(*) FROM inquilino WHERE dni = @dni AND id != @idExcluir";
+        var query = "SELECT COUNT(*) FROM inquilino WHERE dni = @dni AND id != @idExcluir AND activo = 1";
 
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@dni", dni);
@@ -85,7 +88,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "INSERT INTO inquilino (nombre_completo, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono)";
+        var query = "INSERT INTO inquilino (nombre_completo, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono, 1)";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -103,7 +106,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "UPDATE inquilino SET nombre_completo = @nombre, dni = @dni, email = @email, telefono = @telefono WHERE id = @id";
+        var query = "UPDATE inquilino SET nombre_completo = @nombre, dni = @dni, email = @email, telefono = @telefono, activo = @activo WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -112,12 +115,12 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         command.Parameters.AddWithValue("@dni", inquilino.dni);
         command.Parameters.AddWithValue("@email", (object?)inquilino.email ?? DBNull.Value);
         command.Parameters.AddWithValue("@telefono", (object?)inquilino.telefono ?? DBNull.Value);
-
+        command.Parameters.AddWithValue("@activo", inquilino.activo);
         command.ExecuteNonQuery();
     }
 
-    // baja de inquilino
-    public void Eliminar(int id)
+    // baja FISICA de inquilino
+    public void EliminarFisico(int id)
     {
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
@@ -128,5 +131,46 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         command.Parameters.AddWithValue("@id", id);
 
         command.ExecuteNonQuery();
+    }
+
+    public void Eliminar(int id)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query = "UPDATE inquilino SET activo = 0 WHERE id = @id";
+
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        command.ExecuteNonQuery();
+    }
+
+    public IList<Inquilino> GetAllIncludingInactive()
+    {
+        var lista = new List<Inquilino>();
+
+        using var connection = new MySqlConnection(connectionString);
+
+        var query = "SELECT id, nombre_completo, dni, email, telefono, activo FROM inquilino";
+        using var command = new MySqlCommand(query, connection);
+        connection.Open();
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            var inquilino = new Inquilino
+            {
+                id_inquilino = reader.GetInt32("id"),
+                dni = reader.IsDBNull(reader.GetOrdinal("dni")) ? "" : reader.GetString("dni"),
+                nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo")) ? "" : reader.GetString("nombre_completo"),
+                email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
+                telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+                activo = reader.GetBoolean("activo")
+            };
+            lista.Add(inquilino);
+        }
+
+        return lista;
     }
 }

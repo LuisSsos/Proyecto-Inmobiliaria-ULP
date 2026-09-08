@@ -29,6 +29,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE `tipo_inmueble` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(255) NOT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -44,6 +45,7 @@ CREATE TABLE `propietario` (
   `dni_cuit` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
   `telefono` VARCHAR(255) DEFAULT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -59,6 +61,7 @@ CREATE TABLE `inquilino` (
   `nombre_completo` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
   `telefono` VARCHAR(255) DEFAULT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -79,7 +82,7 @@ CREATE TABLE `inmueble` (
   `precio_por_dia` DECIMAL(10,2) NOT NULL,
   `porcentaje_sena` DECIMAL(5,2) NOT NULL,
   `estado` VARCHAR(255) NOT NULL,
-
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
 
   KEY `propietario_id` (`propietario_id`),
@@ -105,7 +108,7 @@ CREATE TABLE `imagen_inmueble` (
   `inmueble_id` INT(11) NOT NULL,
   `url` VARCHAR(255) NOT NULL,
   `es_portada` TINYINT(1) DEFAULT 0,
-
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
 
   KEY `inmueble_id` (`inmueble_id`),
@@ -131,7 +134,7 @@ CREATE TABLE `reserva` (
   `monto_por_dia` DECIMAL(10,2) NOT NULL,
   `multa` DECIMAL(10,2) DEFAULT 0.00,
   `estado` VARCHAR(255) NOT NULL,
-
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
 
   KEY `inquilino_id` (`inquilino_id`),
@@ -159,7 +162,7 @@ CREATE TABLE `pago` (
   `fecha_pago` DATE NOT NULL,
   `importe` DECIMAL(10,2) NOT NULL,
   `estado` VARCHAR(255) NOT NULL,
-
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
 
   KEY `reserva_id` (`reserva_id`),
@@ -180,7 +183,9 @@ CREATE TABLE `usuario` (
   `rol` varchar(255) DEFAULT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `apellido` varchar(255) DEFAULT NULL,
-  `avatar` varchar(255) DEFAULT NULL
+  `avatar` varchar(255) DEFAULT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)                  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
