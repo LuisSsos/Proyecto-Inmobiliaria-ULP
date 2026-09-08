@@ -69,6 +69,23 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 
 ---
 
+### 6. Configurar credenciales de Cloudinary
+
+El modulo de imagenes de inmuebles utiliza el servicio externo **Cloudinary** para almacenar las fotos. por seguridad, las credenciales (Cloud Name, API Key y API Secret) **no se incluyen en el repositorio** ni en 'appsettings.json'.
+
+Para que el proyecto funcione en el equipo, hay que usar estos comandos en la carpeta del proyecto, reemplazando los valores por los que te fueron entregados por separado (no se suben a GitHub por motivos de seguridad):
+
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "Cloudinary:CloudName" "TU_CLOUD_NAME"
+dotnet user-secrets set "Cloudinary:ApiKey" "TU_API_KEY"
+dotnet user-secrets set "Cloudinary:ApiSecret" "TU_API_SECRET"
+```
+
+> **Nota para el docente:** las credenciales de Cloudinary se entregan por separado (fuera del repositorio) para no gastar el limite de la cuenta gratuita.
+
+---
+
 ## ⚙️ Estado Actual del Desarrollo
 * Configuración de la base de datos **MySQL** y de la inyección de dependencias mediante RepositorioBase.
 * Desarrollo de **modelos, repositorios y controladores** para las entidades:
@@ -79,7 +96,11 @@ Se podrá ver el  diagrama relacional en la carpeta db.
   * **TipoInmueble**
   * **Usuario**
 * Implementación de vistas Razor con operaciones CRUD para permitir listar, crear, editar y eliminar registros de **Propietarios, Inquilinos, Inmuebles, Reservas y Usuarios.**
-* La entidad Usuario se encuentra implementada de forma preliminar, pero actualmente **no es accesible desde la interfaz web.**
+* Implementación de **autenticacion y autorizacion** mediante cookies:
+  * Login con email y contraseña ('/auth/login').
+  * Roles diferenciados: **Administrador** (acceso total, incluida la eliminación de registros) y **Empleado** (puede crear y modificar, pero no eliminar).
+  * Cada usuario puede editar su propio perfil desde '/Usuario/MiPerfil', sin necesidad de ser Administrador.
+  * La entidad Usuario ya es accesible desde la interfaz web, con navegación integrada en el menú principal.
 *Implementación de las funcionalidades de **Editar y Eliminar** para la entidad Reserva.
 * Implementación de validaciones de negocio para la entidad **Reserva**:
   * No se permite guardar una reserva con fecha de inicio posterior o igual a la fecha de fin.

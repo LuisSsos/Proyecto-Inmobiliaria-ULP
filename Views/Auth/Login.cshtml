@@ -1,0 +1,17 @@
+@model MVC.Models.LoginViewModel
+
+<h2>Iniciar sesión</h2>
+
+<div asp-validation-summary="All" style="color:red"></div>
+
+<form asp-action="Login" method="post">
+    <div>
+        <label>Email</label>
+        <input asp-for="email" />
+    </div>
+    <div>
+        <label>Contraseña</label>
+        <input asp-for="contrasena" type="password" />
+    </div>
+    <button type="submit">Ingresar</button>
+</form>

@@ -60,6 +60,32 @@
                                 Reservas
                             </a>
                         </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Usuario" asp-action="Index">
+                                    Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Usuario" asp-action="MiPerfil">
+                                    Mi perfil (@User.Identity.Name)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Logout">
+                                    Salir
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Login">
+                                    Iniciar sesión
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                 </div>

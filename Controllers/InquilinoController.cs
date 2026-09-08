@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
 using MySqlConnector;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace MVC.Controllers;
-
+[Authorize]
 public class InquilinoController : Controller
 {
     private readonly IRepositorioInquilino repositorio;
@@ -128,6 +129,7 @@ public class InquilinoController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         try
@@ -155,6 +157,7 @@ public class InquilinoController : Controller
 
 
     [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
     public IActionResult EliminarConfirmado(int id)
     {
         try

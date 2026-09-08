@@ -23,5 +23,8 @@ namespace MVC.Models
         public string rol { get; set; } = string.Empty;
 
         public string? avatar { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        public string contrasena { get; set; } = string.Empty;
     }
 }

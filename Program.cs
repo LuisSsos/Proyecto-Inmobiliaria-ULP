@@ -1,4 +1,5 @@
 using MVC.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +11,14 @@ builder.Services.AddScoped<MVC.Repositories.IRepositorioInmueble, MVC.Repositori
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioImagenInmueble, RepositorioImagenInmueble>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccesoDenegado";
+    });
+
 var app = builder.Build();
 app.UseMiddleware<MVC.Middleware.ExceptionMiddleware>();
 
@@ -23,7 +32,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

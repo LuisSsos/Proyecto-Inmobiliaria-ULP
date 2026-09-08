@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
 namespace mvc.Controllers;
 
+[Authorize]
 public class InmuebleController : Controller
 {
     private readonly IRepositorioInmueble repoInmueble;
@@ -93,6 +94,7 @@ public class InmuebleController : Controller
 
     // ELIMINAR - GET
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         try
@@ -116,6 +118,7 @@ public class InmuebleController : Controller
 
     // ELIMINAR - POST
     [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
     public IActionResult EliminarConfirmado(int id)
     {
         try

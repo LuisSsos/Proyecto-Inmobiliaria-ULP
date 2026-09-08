@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace MVC.Controllers;
 
+[Authorize]
 public class UsuarioController : Controller
 {
     private readonly IRepositorioUsuario repositorio;
@@ -73,6 +75,7 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         var usuario = repositorio.ObtenerPorId(id);
@@ -84,9 +87,37 @@ public class UsuarioController : Controller
     }
 
     [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
     public IActionResult EliminarConfirmado(int id)
     {
         repositorio.Eliminar(id);
         return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult MiPerfil()
+    {
+        var idActual = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var usuario = repositorio.ObtenerPorId(idActual);
+        if (usuario == null)
+        {
+            return NotFound();
+        }
+        return View(usuario);
+    }
+
+    [HttpPost]
+    public IActionResult MiPerfil(Usuario usuario)
+    {
+        var idActual = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        usuario.id_usuario = idActual;
+
+        if (!ModelState.IsValid)
+        {
+            return View(usuario);
+        }
+
+        repositorio.Modificar(usuario);
+        return RedirectToAction("MiPerfil");
     }
 }

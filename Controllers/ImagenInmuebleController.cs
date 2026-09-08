@@ -3,9 +3,10 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
 namespace MVC.Controllers;
 
+[Authorize]
 public class ImagenInmuebleController : Controller
 {
     private readonly IRepositorioImagenInmueble repositorio;
@@ -80,6 +81,7 @@ public class ImagenInmuebleController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         var imagen = repositorio.ObtenerPorId(id);
@@ -91,6 +93,7 @@ public class ImagenInmuebleController : Controller
     }
 
     [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
     public IActionResult EliminarConfirmado(int id)
     {
         var imagen = repositorio.ObtenerPorId(id);

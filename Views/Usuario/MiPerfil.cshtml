@@ -1,10 +1,11 @@
 @model MVC.Models.Usuario
 
-<h2>Nuevo Usuario</h2>
+<h2>Editar Usuario</h2>
 
 <div asp-validation-summary="All" style="color:red"></div>
 
-<form asp-action="Crear" method="post">
+<form asp-action="MiPerfil" method="post">
+    <input type="hidden" asp-for="id_usuario" />
     <div>
         <label>Nombre</label>
         <input asp-for="nombre" />
@@ -18,16 +19,11 @@
         <input asp-for="email" />
     </div>
     <div>
-        <label>Contraseña</label>
-        <input asp-for="contrasena" type="password" />
-    </div>
-    <div>
         <label>Rol</label>
         <select asp-for="rol">
-            <option value="">-- Seleccionar --</option>
             <option value="Administrador">Administrador</option>
             <option value="Empleado">Empleado</option>
         </select>
     </div>
-    <button type="submit">Guardar</button>
+    <button type="submit">Guardar cambios</button>
 </form>
