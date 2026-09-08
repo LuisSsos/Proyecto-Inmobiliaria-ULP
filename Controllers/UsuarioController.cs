@@ -3,6 +3,9 @@ using MVC.Models;
 using MVC.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace MVC.Controllers;
 
 [Authorize]
@@ -15,6 +18,7 @@ public class UsuarioController : Controller
         this.repositorio = repositorio;
     }
 
+    [Authorize(Roles = "Administrador")]
     public IActionResult Index()
     {
         var lista = repositorio.ObtenerTodos();
@@ -22,12 +26,14 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Crear()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Crear(Usuario usuario)
     {
         if (!ModelState.IsValid)
@@ -46,6 +52,7 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Editar(int id)
     {
         var usuario = repositorio.ObtenerPorId(id);
@@ -57,6 +64,7 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Editar(Usuario usuario)
     {
         if (!ModelState.IsValid)
@@ -107,10 +115,15 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
-    public IActionResult MiPerfil(Usuario usuario)
+    public async Task<IActionResult> MiPerfil(Usuario usuario)
     {
         var idActual = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         usuario.id_usuario = idActual;
+
+        var usuarioActual = repositorio.ObtenerPorId(idActual);
+        usuario.rol = usuarioActual!.rol;
+
+        ModelState.Remove(nameof(usuario.rol));
 
         if (!ModelState.IsValid)
         {
@@ -118,6 +131,19 @@ public class UsuarioController : Controller
         }
 
         repositorio.Modificar(usuario);
+
+        // recarga la cookie con los datos actualizados, para que el menu muestre el nombre nuevo
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, usuario.id_usuario.ToString()),
+        new Claim(ClaimTypes.Name, usuario.nombre + " " + usuario.apellido),
+        new Claim(ClaimTypes.Email, usuario.email),
+        new Claim(ClaimTypes.Role, usuario.rol)
+    };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
         return RedirectToAction("MiPerfil");
     }
 }

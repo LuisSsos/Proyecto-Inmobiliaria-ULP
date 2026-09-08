@@ -109,3 +109,17 @@ dotnet user-secrets set "Cloudinary:ApiSecret" "TU_API_SECRET"
 * Implementación de un **middleware de manejo de excepciones** a nivel global, que captura cualquier error no controlado de la aplicación y redirige a una vista de error personalizada, evitando mostrar el detalle técnico al usuario.
 * Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante integración con el servicio externo **Cloudinary**, guardando en la base de datos la referencia (URL) de cada imagen subida.
 * Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.
+
+### Actualización de esquema: campo `activo`
+
+si la base de datos fue clonada con una version anterior del script `.sql`, es posible que falte la columna `activo` (usada para dar de baja logica, sin borrar físicamente, a Usuarios, Propietarios, Inmuebles, Inquilinos y Reservas). Si al ejecutar el proyecto hay un error como `Unknown column 'activo'`, corré lo siguiente en tu bd:
+
+```sql
+ALTER TABLE usuario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE propietario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE inmueble ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE inquilino ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE reserva ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+```
+
+Si se clona el repo por primera vez, asegurate de usar el script `.sql` actualizado, que ya incluye estas columnas.
