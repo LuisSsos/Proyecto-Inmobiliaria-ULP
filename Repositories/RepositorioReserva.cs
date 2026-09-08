@@ -15,7 +15,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado FROM reserva ";
+        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, activo FROM reserva WHERE activo = 1";
 
         using var command = new MySqlCommand(query, connection);
         using var reader = command.ExecuteReader();
@@ -36,7 +36,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
                 monto_por_dia = reader.GetDecimal("monto_por_dia"),
                 multa = reader.GetDecimal("multa"),
                 estado = reader.GetString("estado"),
-
+                Activo = reader.GetBoolean("activo")
 
             });
         }
@@ -51,7 +51,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado FROM reserva WHERE id = @id";
+        var query = "SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado FROM reserva WHERE id = @id AND activo = 1";
 
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", id);
@@ -73,7 +73,8 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
 
                 monto_por_dia = reader.GetDecimal("monto_por_dia"),
                 multa = reader.GetDecimal("multa"),
-                estado = reader.GetString("estado")
+                estado = reader.GetString("estado"),
+                Activo = reader.GetBoolean("activo")
             };
         }
 
@@ -88,8 +89,8 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = @"INSERT INTO reserva (inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado) 
-                VALUES ( @inquilino_id, @inmueble_id, @fecha_desde, @fecha_hasta, @fecha_fin_real, @monto_por_dia, @multa, @estado)";
+        var query = @"INSERT INTO reserva (inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, activo) 
+                VALUES ( @inquilino_id, @inmueble_id, @fecha_desde, @fecha_hasta, @fecha_fin_real, @monto_por_dia, @multa, @estado, 1)";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -116,7 +117,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = " UPDATE reserva SET inquilino_id = @inquilino_id, inmueble_id = @inmueble_id, fecha_desde = @fecha_desde, fecha_hasta = @fecha_hasta, fecha_fin_real = @fecha_fin_real, monto_por_dia = @monto_por_dia, multa = @multa, estado = @estado WHERE id = @id";
+        var query = " UPDATE reserva SET inquilino_id = @inquilino_id, inmueble_id = @inmueble_id, fecha_desde = @fecha_desde, fecha_hasta = @fecha_hasta, fecha_fin_real = @fecha_fin_real, monto_por_dia = @monto_por_dia, multa = @multa, estado = @estado, activo = @activo WHERE id = @id";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -134,12 +135,13 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         command.Parameters.AddWithValue("@monto_por_dia", reserva.monto_por_dia);
         command.Parameters.AddWithValue("@multa", reserva.multa);
         command.Parameters.AddWithValue("@estado", reserva.estado);
+        command.Parameters.AddWithValue("@activo", reserva.Activo);
         command.ExecuteNonQuery();
     }
 
 
     // Baja
-    public void Eliminar(int id)
+    public void BajaFisica(int id)
     {
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
@@ -162,6 +164,7 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
                   WHERE inmueble_id = @inmuebleId 
                   AND id != @idExcluir
                   AND estado != 'Cancelada'
+                  AND activo = 1
                   AND fecha_desde < @fechaHasta 
                   AND fecha_hasta > @fechaDesde";
 
@@ -172,6 +175,36 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         command.Parameters.AddWithValue("@fechaHasta", fechaHasta);
 
         var count = Convert.ToInt32(command.ExecuteScalar());
+        return count > 0;
+    }
+
+    public void Eliminar(int id)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query = "UPDATE reserva SET activo = 0 WHERE id = @id";
+
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        command.ExecuteNonQuery();
+    }
+
+    public IList<Reserva> GetAllIncludingInactive()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TieneReservasAsociadas(int inmuebleId)
+    {
+        using var conexion = new MySqlConnection(connectionString);
+        string sql = "SELECT COUNT(*) FROM reserva WHERE inmueble_id = @InmuebleId AND activo = 1;";
+        using var command = new MySqlCommand(sql, conexion);
+        command.Parameters.AddWithValue("@InmuebleId", inmuebleId);
+
+        conexion.Open();
+        int count = Convert.ToInt32(command.ExecuteScalar());
         return count > 0;
     }
 }

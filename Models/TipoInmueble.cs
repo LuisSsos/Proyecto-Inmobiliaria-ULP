@@ -11,5 +11,7 @@ namespace MVC.Models
         [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El tipo de inmueble solo puede contener letras.")]
         public string Nombre { get; set; } = string.Empty;
 
+        public bool Activo { get; set; } = true;
+
     }
 }

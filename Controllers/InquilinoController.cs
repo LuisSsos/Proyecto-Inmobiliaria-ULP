@@ -10,11 +10,12 @@ namespace MVC.Controllers;
 public class InquilinoController : Controller
 {
     private readonly IRepositorioInquilino repositorio;
-
-    public InquilinoController(IRepositorioInquilino repositorio)
-    {
-        this.repositorio = repositorio;
-    }
+    private readonly IRepositorioReserva repoReserva;
+    public InquilinoController(IRepositorioInquilino repositorio, IRepositorioReserva repoReserva)
+{
+    this.repositorio = repositorio;
+    this.repoReserva = repoReserva;
+}
 
     public IActionResult Index()
     {
@@ -128,63 +129,57 @@ public class InquilinoController : Controller
         }
     }
 
-    [HttpGet]
-    [Authorize(Roles = "Administrador")]
-    public IActionResult Eliminar(int id)
+[HttpGet]
+[Authorize(Roles = "Administrador")]
+public IActionResult Eliminar(int id)
+{
+    try
     {
-        try
+        var inquilino = repositorio.ObtenerPorId(id);
+
+        if (inquilino == null)
         {
-            var inquilino = repositorio.ObtenerPorId(id);
-
-            if (inquilino == null)
-            {
-                return NotFound();
-            }
-
-            return View(inquilino);
+            return NotFound();
         }
-        catch (MySqlException ex)
+
+        bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
+        if (tieneReservas)
         {
-            TempData["Error"] = $"Error al obtener el inquilino (MySQL {ex.Number}).";
+            TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
             return RedirectToAction(nameof(Index));
         }
-        catch (Exception)
-        {
-            TempData["Error"] = "Ocurrió un error al obtener el inquilino.";
-            return RedirectToAction(nameof(Index));
-        }
+
+        return View(inquilino);
     }
-
-
-    [HttpPost, ActionName("Eliminar")]
-    [Authorize(Roles = "Administrador")]
-    public IActionResult EliminarConfirmado(int id)
+    catch (Exception)
     {
-        try
-        {
-            repositorio.Eliminar(id);
-
-            TempData["Success"] = "El inquilino fue eliminado correctamente.";
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (MySqlException ex) when (ex.Number == 1451)
-        {
-            TempData["Error"] = "No puedes eliminar un inquilino que tenga reservas asociadas.";
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (MySqlException ex)
-        {
-            TempData["Error"] = $"Error MySQL ({ex.Number}): No se pudo completar la eliminación.";
-
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception)
-        {
-            TempData["Error"] = "Ocurrió un error inesperado al eliminar el inquilino.";
-
-            return RedirectToAction(nameof(Index));
-        }
+        TempData["Error"] = "Ocurrió un error al obtener el inquilino.";
+        return RedirectToAction(nameof(Index));
     }
+}
+
+[HttpPost, ActionName("Eliminar")]
+[Authorize(Roles = "Administrador")]
+public IActionResult EliminarConfirmado(int id)
+{
+    try
+    {
+        bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
+        if (tieneReservas)
+        {
+            TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        repositorio.Eliminar(id);
+        TempData["Success"] = "El inquilino fue dado de baja correctamente.";
+
+        return RedirectToAction(nameof(Index));
+    }
+    catch (Exception)
+    {
+        TempData["Error"] = "Ocurrió un error inesperado al eliminar el inquilino.";
+        return RedirectToAction(nameof(Index));
+    }
+}
 }

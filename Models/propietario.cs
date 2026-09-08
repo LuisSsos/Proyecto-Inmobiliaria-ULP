@@ -24,5 +24,7 @@ namespace MVC.Models
         [StringLength(18, MinimumLength = 6, ErrorMessage = "El teléfono no puede ser menor a 6 dígitos ni superar los 18 dígitos")]
         [RegularExpression(@"^\+?[0-9]+[\s\-\(\)0-9]*$", ErrorMessage = "El teléfono solo permite números, espacios, guiones, paréntesis y prefijo '+'.")]
         public string? Telefono { get; set; }
+
+        public bool Activo { get; set; } = true;
     }
 }

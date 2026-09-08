@@ -11,17 +11,19 @@ public class InmuebleController : Controller
     private readonly IRepositorioPropietario repoProp;
     private readonly IRepositorioTipoInmueble repoTipo;
     private readonly IRepositorioImagenInmueble repoImagen;
-
+    private readonly IRepositorioReserva repoReserva;
     public InmuebleController(
         IRepositorioInmueble repoInmueble,
         IRepositorioPropietario repoProp,
         IRepositorioTipoInmueble repoTipo,
-        IRepositorioImagenInmueble repoImagen)
+        IRepositorioImagenInmueble repoImagen,
+         IRepositorioReserva repoReserva)
     {
         this.repoInmueble = repoInmueble;
         this.repoProp = repoProp;
         this.repoTipo = repoTipo;
         this.repoImagen = repoImagen;
+        this.repoReserva = repoReserva;
     }
 
     // LISTAR
@@ -108,6 +110,12 @@ public class InmuebleController : Controller
                 return NotFound();
             }
 
+            if (repoReserva.TieneReservasAsociadas(id))
+            {
+                TempData["Error"] = "No se puede dar de baja el inmueble porque tiene reservas registradas o activas.";
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(inmueble);
         }
         catch (Exception)
@@ -123,15 +131,16 @@ public class InmuebleController : Controller
     {
         try
         {
-            repoInmueble.Baja(id);
+            if (repoReserva.TieneReservasAsociadas(id))
+            {
+                TempData["Error"] = "No se puede dar de baja el inmueble porque tiene reservas asociadas.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction("Index");
-        }
-        catch (MySqlConnector.MySqlException)
-        {
-            TempData["Error"] = "No puedes eliminar un inmueble que posea una reserva.";
+            repoInmueble.Baja(id); // O tu método de baja lógica
+            TempData["Exito"] = "El inmueble ha sido dado de baja correctamente.";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception)
         {

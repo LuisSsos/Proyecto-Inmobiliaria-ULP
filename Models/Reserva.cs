@@ -32,5 +32,7 @@ namespace MVC.Models
                 );
             }
         }
+
+        public bool Activo { get; set; } = true;
     }
 }

@@ -31,5 +31,6 @@ namespace MVC.Models
         [RegularExpression(@"^[0-9\s\-\+\(\)]{8,20}$",
             ErrorMessage = "El teléfono contiene caracteres no válidos")]
         public string? telefono { get; set; }
+        public bool activo { get; set; } = true;
     }
 }
