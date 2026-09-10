@@ -69,23 +69,6 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 
 ---
 
-### 6. Configurar credenciales de Cloudinary
-
-El modulo de imagenes de inmuebles utiliza el servicio externo **Cloudinary** para almacenar las fotos. por seguridad, las credenciales (Cloud Name, API Key y API Secret) **no se incluyen en el repositorio** ni en 'appsettings.json'.
-
-Para que el proyecto funcione en el equipo, hay que usar estos comandos en la carpeta del proyecto, reemplazando los valores por los que te fueron entregados por separado (no se suben a GitHub por motivos de seguridad):
-
-```bash
-dotnet user-secrets init
-dotnet user-secrets set "Cloudinary:CloudName" "TU_CLOUD_NAME"
-dotnet user-secrets set "Cloudinary:ApiKey" "TU_API_KEY"
-dotnet user-secrets set "Cloudinary:ApiSecret" "TU_API_SECRET"
-```
-
-> **Nota para el docente:** las credenciales de Cloudinary se entregan por separado (fuera del repositorio) para no gastar el limite de la cuenta gratuita.
-
----
-
 ## ⚙️ Estado Actual del Desarrollo
 * Configuración de la base de datos **MySQL** y de la inyección de dependencias mediante RepositorioBase.
 * Desarrollo de **modelos, repositorios y controladores** para las entidades:
@@ -107,7 +90,7 @@ dotnet user-secrets set "Cloudinary:ApiSecret" "TU_API_SECRET"
   * No se permite cargar una reserva con fecha de inicio anterior al dia actual.
   * No se permite reservar un mismo inmueble en fechas que se superpongan con otra reserva ya existente.
 * Implementación de un **middleware de manejo de excepciones** a nivel global, que captura cualquier error no controlado de la aplicación y redirige a una vista de error personalizada, evitando mostrar el detalle técnico al usuario.
-* Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante integración con el servicio externo **Cloudinary**, guardando en la base de datos la referencia (URL) de cada imagen subida.
+* Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante almacenamiento local guardando en la computadora cada imagen subida y en la base de datos guardando la ubicación.
 * Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.
 
 ### Actualización de esquema: campo `activo`

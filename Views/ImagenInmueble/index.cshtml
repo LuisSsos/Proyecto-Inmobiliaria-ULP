@@ -1,14 +1,50 @@
 @model List<MVC.Models.ImagenInmueble>
 
-<h2>Imágenes del inmueble</h2>
-
-<a asp-action="Crear" asp-route-inmuebleId="@ViewBag.InmuebleId">Agregar imagen</a>
-
-@foreach (var imagen in Model)
-{
-    <div>
-        <img src="@imagen.url" width="150" />
-        <p>@(imagen.esPortada ? "Portada" : "")</p>
-        <a asp-action="Eliminar" asp-route-id="@imagen.id_imagenInmueble">Eliminar</a>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">Imagenes del inmueble</h2>
+        <a asp-action="Crear" asp-route-inmuebleId="@ViewBag.InmuebleId" 
+           class="btn btn-success">
+             Agregar imagen
+        </a>
     </div>
-}
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay imágenes cargadas aún.
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var imagen in Model)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@imagen.url" 
+                             class="card-img-top" 
+                             style="height: 200px; object-fit: cover;" 
+                             alt="Imagen del inmueble" />
+                        <div class="card-body">
+                            @if (imagen.esPortada)
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Portada
+                                </span>
+                            }
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <a asp-action="Eliminar" 
+                               asp-route-id="@imagen.id_imagenInmueble" 
+                               class="btn btn-outline-danger btn-sm w-100"
+                               onclick="return confirm('¿Estás seguro de eliminar esta imagen?');">
+                                 Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

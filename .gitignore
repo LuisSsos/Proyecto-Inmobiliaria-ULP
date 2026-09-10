@@ -29,6 +29,8 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+wwwroot/img/inmuebles/*
+!wwwroot/img/inmuebles/.gitkeep
 
 # Visual Studio 2015
 .vs/

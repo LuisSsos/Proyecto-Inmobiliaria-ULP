@@ -1,25 +1,54 @@
+@model List<MVC.Models.ImagenInmueble>
+
 @{
-    ViewData["Title"] = "Agregar Imagen";
+    ViewData["Title"] = "Imágenes del Inmueble";
 }
 
-<h2>Agregar Imagen</h2>
+<h2>Imágenes del inmueble</h2>
 
-<div asp-validation-summary="All" style="color:red"></div>
+<div style="margin-bottom: 20px;">
+    <a asp-action="Crear" asp-route-inmuebleId="@ViewBag.InmuebleId" 
+       style="text-decoration: none; color: white; background-color: #28a745; 
+              padding: 8px 16px; border-radius: 4px; display: inline-block;">
+        Agregar imagen
+    </a>
+</div>
 
-<form asp-action="Crear" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="inmuebleId" value="@ViewBag.InmuebleId" />
-
-    <div>
-        <label>Imagen</label>
-        <input type="file" name="archivo" accept="image/*" />
+@if (Model == null || !Model.Any())
+{
+    <p style="color: #6c757d; font-style: italic;">
+        No hay imágenes cargadas aún.
+    </p>
+}
+else
+{
+    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+        @foreach (var imagen in Model)
+        {
+            <div style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; 
+                        width: 180px; text-align: center;">
+                <img src="@imagen.url" 
+                     style="width: 100%; height: 150px; object-fit: cover; 
+                            border-radius: 4px;" 
+                     alt="Imagen del inmueble" />
+                
+                @if (imagen.esPortada)
+                {
+                    <p style="margin: 8px 0; color: #ffc107; font-weight: bold;">
+                        Portada
+                    </p>
+                }
+                
+                <a asp-action="Eliminar" 
+                   asp-route-id="@imagen.id_imagenInmueble" 
+                   style="display: inline-block; margin-top: 8px; 
+                          text-decoration: none; color: white; 
+                          background-color: #dc3545; padding: 6px 12px; 
+                          border-radius: 4px; font-size: 14px;"
+                   onclick="return confirm('¿Estás seguro de eliminar esta imagen?');">
+                    Eliminar
+                </a>
+            </div>
+        }
     </div>
-
-    <div>
-        <label>
-            <input type="checkbox" name="esPortada" value="true" />
-            Marcar como portada
-        </label>
-    </div>
-
-    <button type="submit">Subir</button>
-</form>
+}

@@ -126,9 +126,52 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
     }
 
     public Inmueble? GetById(int id)
+{
+    using var conexion = new MySqlConnection(connectionString);
+    string sql = @"SELECT i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, 
+                    i.cupo, i.latitud, i.longitud, i.precio_por_dia, i.porcentaje_sena, i.estado,
+                    p.nombre AS PropietarioNombre, p.dni_cuit, i.activo,
+                    t.nombre AS TipoNombre
+                    FROM inmueble i
+                    INNER JOIN propietario p ON i.propietario_id = p.id
+                    INNER JOIN tipo_inmueble t ON i.tipo_inmueble_id = t.id
+                    WHERE i.id = @id;";
+    using var command = new MySqlCommand(sql, conexion);
+    command.Parameters.AddWithValue("@id", id);
+    conexion.Open();
+    using var reader = command.ExecuteReader();
+
+    if (reader.Read())
     {
-        throw new NotImplementedException();
+        return new Inmueble
+        {
+            IdInmueble = reader.GetInt32("id"),
+            PropietarioId = reader.GetInt32("propietario_id"),
+            TipoInmuebleId = reader.GetInt32("tipo_inmueble_id"),
+            Direccion = reader.GetString("direccion"),
+            Cupo = reader.GetInt32("cupo"),
+            Latitud = reader.GetDecimal("latitud"),
+            Longitud = reader.GetDecimal("longitud"),
+            PrecioPorDia = reader.GetDecimal("precio_por_dia"),
+            PorcentajeSeña = reader.GetDecimal("porcentaje_sena"),
+            Estado = reader.GetString("estado"),
+            Activo = reader.GetBoolean("activo"),
+            Titular = new Propietario
+            {
+                IdPropietario = reader.GetInt32("propietario_id"),
+                Nombre = reader.GetString("PropietarioNombre"),
+                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit")
+            },
+            Tipo = new TipoInmueble
+            {
+                IdTipoInmueble = reader.GetInt32("tipo_inmueble_id"),
+                Nombre = reader.GetString("TipoNombre")
+            }
+        };
     }
+
+    return null;
+}
 
     public IList<Inmueble> GetAllIncludingInactive()
     {

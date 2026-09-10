@@ -1,5 +1,3 @@
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
@@ -10,19 +8,12 @@ namespace MVC.Controllers;
 public class ImagenInmuebleController : Controller
 {
     private readonly IRepositorioImagenInmueble repositorio;
-    private readonly Cloudinary cloudinary;
+    private readonly IWebHostEnvironment entorno;
 
-    public ImagenInmuebleController(IRepositorioImagenInmueble repositorio, IConfiguration configuration)
+    public ImagenInmuebleController(IRepositorioImagenInmueble repositorio, IWebHostEnvironment entorno)
     {
         this.repositorio = repositorio;
-
-        // config de cloudinary
-        var cuenta = new Account(
-            configuration["Cloudinary:CloudName"],
-            configuration["Cloudinary:ApiKey"],
-            configuration["Cloudinary:ApiSecret"]
-        );
-        cloudinary = new Cloudinary(cuenta);
+        this.entorno = entorno;
     }
 
     // Listado de imagenes de un inmueble
@@ -50,28 +41,26 @@ public class ImagenInmuebleController : Controller
             return View();
         }
 
-        // subida a cloudinary
-        using var stream = archivo.OpenReadStream();
-        var parametros = new ImageUploadParams
+        // carpeta destino: wwwroot/img/inmuebles
+        var imagenes = Path.Combine(entorno.WebRootPath, "img", "inmuebles");
+        if (!Directory.Exists(imagenes))
         {
-            File = new FileDescription(archivo.FileName, stream),
-            Folder = "inmobiliaria"
-        };
+            Directory.CreateDirectory(imagenes);
+        }
 
-        var resultado = await cloudinary.UploadAsync(parametros);
+        // nombre unico 
+        var nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(archivo.FileName);
+        var rutaFisica = Path.Combine(imagenes, nombreArchivo);
 
-        // si Cloudinary no devuelve la URL, fallo en la subida
-        if (resultado.Error != null || resultado.SecureUrl == null)
+        using (var stream = new FileStream(rutaFisica, FileMode.Create))
         {
-            ModelState.AddModelError("", "Error al subir la imagen a Cloudinary: " + (resultado.Error?.Message ?? "motivo desconocido"));
-            ViewBag.InmuebleId = inmuebleId;
-            return View();
+            await archivo.CopyToAsync(stream);
         }
 
         var imagen = new ImagenInmueble
         {
             inmueble_id = inmuebleId,
-            url = resultado.SecureUrl.ToString(),
+            url = "/img/inmuebles/" + nombreArchivo,
             esPortada = esPortada
         };
 
@@ -103,6 +92,14 @@ public class ImagenInmuebleController : Controller
         }
 
         var inmuebleId = imagen.inmueble_id;
+
+        // borra el archivo físico del disco
+        var rutaFisica = Path.Combine(entorno.WebRootPath, imagen.url!.TrimStart('/'));
+        if (System.IO.File.Exists(rutaFisica))
+        {
+            System.IO.File.Delete(rutaFisica);
+        }
+
         repositorio.Eliminar(id);
 
         return RedirectToAction("Index", new { inmuebleId });
