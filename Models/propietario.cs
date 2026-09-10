@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-
+using MVC.Models.Validaciones;
 namespace MVC.Models
 {
+    [AlMenosUnContacto(nameof(Email), nameof(Telefono))]
     public class Propietario
     {
         public int IdPropietario { get; set; }

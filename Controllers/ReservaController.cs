@@ -209,4 +209,58 @@ public class ReservaController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public IActionResult TerminarAnticipado(int id)
+    {
+        var reserva = repositorioReserva.ObtenerPorId(id);
+        if (reserva == null) return NotFound();
+
+        reserva.fecha_fin_real = DateTime.Today;
+        return View(reserva);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult TerminarAnticipado(int id_reserva, DateTime fecha_fin_real, decimal multa)
+    {
+        var reserva = repositorioReserva.ObtenerPorId(id_reserva);
+        if (reserva == null) return NotFound();
+
+        if (fecha_fin_real < reserva.fecha_desde || fecha_fin_real > reserva.fecha_hasta)
+        {
+            ModelState.AddModelError("fecha_fin_real", "La fecha de terminación debe estar dentro del rango de la reserva.");
+            return View(reserva);
+        }
+
+        reserva.fecha_fin_real = fecha_fin_real;
+        reserva.multa = multa;
+        reserva.estado = "Finalizada Anticipadamente";
+
+        repositorioReserva.Modificar(reserva);
+        TempData["Success"] = "La reserva fue terminada anticipadamente.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public IActionResult Renovar(int id)
+    {
+        var reserva = repositorioReserva.ObtenerPorId(id);
+        if (reserva == null) return NotFound();
+
+        var nuevaReserva = new Reserva
+        {
+            inmueble_id = reserva.inmueble_id,
+            inquilino_id = reserva.inquilino_id,
+            fecha_desde = reserva.fecha_hasta.AddDays(1),
+            fecha_hasta = reserva.fecha_hasta.AddMonths(1),
+            monto_por_dia = reserva.monto_por_dia,
+            estado = "Pendiente"
+        };
+
+        ViewBag.Inmueble = repositorioInmueble.GetById(reserva.inmueble_id);
+        ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
+
+        return View("Crear", nuevaReserva);
+    }
 }
