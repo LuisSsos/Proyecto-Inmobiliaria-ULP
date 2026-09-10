@@ -3,6 +3,7 @@ using MVC.Models;
 using MVC.Repositories;
 using Microsoft.AspNetCore.Authorization;
 namespace MVC.Controllers;
+
 [Authorize]
 public class ReservaController : Controller
 {
@@ -223,25 +224,31 @@ public class ReservaController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult TerminarAnticipado(int id_reserva, DateTime fecha_fin_real, decimal multa)
+    public IActionResult TerminarAnticipadoJson([FromBody] TerminarAnticipadoDto dto)
     {
-        var reserva = repositorioReserva.ObtenerPorId(id_reserva);
-        if (reserva == null) return NotFound();
+        var reserva = repositorioReserva.ObtenerPorId(dto.IdReserva);
+        if (reserva == null)
+            return Json(new { success = false, message = "La reserva no existe." });
 
-        if (fecha_fin_real < reserva.fecha_desde || fecha_fin_real > reserva.fecha_hasta)
+        if (dto.FechaFinReal < reserva.fecha_desde || dto.FechaFinReal > reserva.fecha_hasta)
         {
-            ModelState.AddModelError("fecha_fin_real", "La fecha de terminación debe estar dentro del rango de la reserva.");
-            return View(reserva);
+            return Json(new { success = false, message = "La fecha debe estar dentro del rango original de la reserva." });
         }
 
-        reserva.fecha_fin_real = fecha_fin_real;
-        reserva.multa = multa;
-        reserva.estado = "Finalizada Anticipadamente";
+        reserva.fecha_fin_real = dto.FechaFinReal;
+        reserva.multa = dto.Multa;
+        reserva.estado = "Finalizada anticipadamente";
 
         repositorioReserva.Modificar(reserva);
-        TempData["Success"] = "La reserva fue terminada anticipadamente.";
-        return RedirectToAction(nameof(Index));
+
+        return Json(new { success = true, message = "Reserva finalizada correctamente." });
+    }
+
+    public class TerminarAnticipadoDto
+    {
+        public int IdReserva { get; set; }
+        public DateTime FechaFinReal { get; set; }
+        public decimal Multa { get; set; }
     }
 
     [HttpGet]
