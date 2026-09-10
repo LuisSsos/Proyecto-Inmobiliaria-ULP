@@ -3,7 +3,8 @@ using MVC.Models;
 using MVC.Repositories;
 using MySqlConnector;
 namespace MVC.Controllers;
-
+using Microsoft.AspNetCore.Authorization;
+[Authorize]
 public class TipoInmuebleController : Controller
 {
     private readonly IRepositorioTipoInmueble repo;
@@ -125,6 +126,7 @@ public class TipoInmuebleController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         try
@@ -146,6 +148,7 @@ public class TipoInmuebleController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(TipoInmueble ti)
     {
         try

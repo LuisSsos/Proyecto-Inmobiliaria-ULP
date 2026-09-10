@@ -69,6 +69,23 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 
 ---
 
+### 6. Configurar credenciales de Cloudinary
+
+El modulo de imagenes de inmuebles utiliza el servicio externo **Cloudinary** para almacenar las fotos. por seguridad, las credenciales (Cloud Name, API Key y API Secret) **no se incluyen en el repositorio** ni en 'appsettings.json'.
+
+Para que el proyecto funcione en el equipo, hay que usar estos comandos en la carpeta del proyecto, reemplazando los valores por los que te fueron entregados por separado (no se suben a GitHub por motivos de seguridad):
+
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "Cloudinary:CloudName" "TU_CLOUD_NAME"
+dotnet user-secrets set "Cloudinary:ApiKey" "TU_API_KEY"
+dotnet user-secrets set "Cloudinary:ApiSecret" "TU_API_SECRET"
+```
+
+> **Nota para el docente:** las credenciales de Cloudinary se entregan por separado (fuera del repositorio) para no gastar el limite de la cuenta gratuita.
+
+---
+
 ## ⚙️ Estado Actual del Desarrollo
 * Configuración de la base de datos **MySQL** y de la inyección de dependencias mediante RepositorioBase.
 * Desarrollo de **modelos, repositorios y controladores** para las entidades:
@@ -79,7 +96,11 @@ Se podrá ver el  diagrama relacional en la carpeta db.
   * **TipoInmueble**
   * **Usuario**
 * Implementación de vistas Razor con operaciones CRUD para permitir listar, crear, editar y eliminar registros de **Propietarios, Inquilinos, Inmuebles, Reservas y Usuarios.**
-* La entidad Usuario se encuentra implementada de forma preliminar, pero actualmente **no es accesible desde la interfaz web.**
+* Implementación de **autenticacion y autorizacion** mediante cookies:
+  * Login con email y contraseña ('/auth/login').
+  * Roles diferenciados: **Administrador** (acceso total, incluida la eliminación de registros) y **Empleado** (puede crear y modificar, pero no eliminar).
+  * Cada usuario puede editar su propio perfil desde '/Usuario/MiPerfil', sin necesidad de ser Administrador.
+  * La entidad Usuario ya es accesible desde la interfaz web, con navegación integrada en el menú principal.
 *Implementación de las funcionalidades de **Editar y Eliminar** para la entidad Reserva.
 * Implementación de validaciones de negocio para la entidad **Reserva**:
   * No se permite guardar una reserva con fecha de inicio posterior o igual a la fecha de fin.
@@ -88,3 +109,17 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 * Implementación de un **middleware de manejo de excepciones** a nivel global, que captura cualquier error no controlado de la aplicación y redirige a una vista de error personalizada, evitando mostrar el detalle técnico al usuario.
 * Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante integración con el servicio externo **Cloudinary**, guardando en la base de datos la referencia (URL) de cada imagen subida.
 * Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.
+
+### Actualización de esquema: campo `activo`
+
+si la base de datos fue clonada con una version anterior del script `.sql`, es posible que falte la columna `activo` (usada para dar de baja logica, sin borrar físicamente, a Usuarios, Propietarios, Inmuebles, Inquilinos y Reservas). Si al ejecutar el proyecto hay un error como `Unknown column 'activo'`, corré lo siguiente en tu bd:
+
+```sql
+ALTER TABLE usuario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE propietario ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE inmueble ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE inquilino ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE reserva ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1;
+```
+
+Si se clona el repo por primera vez, asegurate de usar el script `.sql` actualizado, que ya incluye estas columnas.

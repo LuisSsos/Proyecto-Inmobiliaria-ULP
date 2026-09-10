@@ -62,6 +62,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
 
         return null;
     }
+
     public bool ExisteEmail(string email, int idExcluir = 0)
     {
         using var connection = new MySqlConnection(connectionString);
@@ -81,7 +82,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "INSERT INTO usuario (nombre, apellido, email, rol, avatar, activo) VALUES (@nombre, @apellido, @email, @rol, @avatar, 1)";
+        var query = "INSERT INTO usuario (nombre, apellido, email, rol, avatar, password_hash, activo) VALUES (@nombre, @apellido, @email, @rol, @avatar, @contrasena, 1)";
         using var command = new MySqlCommand(query, connection);
 
         command.Parameters.AddWithValue("@nombre", usuario.nombre);
@@ -89,6 +90,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         command.Parameters.AddWithValue("@email", usuario.email);
         command.Parameters.AddWithValue("@rol", usuario.rol);
         command.Parameters.AddWithValue("@avatar", (object?)usuario.avatar ?? DBNull.Value);
+        command.Parameters.AddWithValue("@contrasena", usuario.contrasena);
 
         command.ExecuteNonQuery();
     }
@@ -98,7 +100,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "UPDATE usuario SET nombre = @nombre, apellido = @apellido, email = @email, rol = @rol, avatar = @avatar, activo = @activo WHERE id = @id";
+        var query = "UPDATE usuario SET nombre = @nombre, apellido = @apellido, email = @email, rol = @rol, avatar = @avatar, password_hash = @contrasena, activo = @activo WHERE id = @id";
         using var command = new MySqlCommand(query, connection);
 
         command.Parameters.AddWithValue("@id", usuario.id_usuario);
@@ -107,6 +109,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         command.Parameters.AddWithValue("@email", usuario.email);
         command.Parameters.AddWithValue("@rol", usuario.rol);
         command.Parameters.AddWithValue("@avatar", (object?)usuario.avatar ?? DBNull.Value);
+        command.Parameters.AddWithValue("@contrasena", usuario.contrasena);
         command.Parameters.AddWithValue("@activo", usuario.Activo);
 
         command.ExecuteNonQuery();
@@ -162,5 +165,32 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         }
 
         return lista;
+    }
+
+    public Usuario? ValidarCredenciales(string email, string contrasena)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        var query = "SELECT id, nombre, apellido, email, rol, avatar FROM usuario WHERE email = @email AND password_hash = @contrasena AND activo = 1";
+        using var command = new MySqlCommand(query, connection);
+        command.Parameters.AddWithValue("@email", email);
+        command.Parameters.AddWithValue("@contrasena", contrasena);
+
+        using var reader = command.ExecuteReader();
+
+        if (reader.Read())
+        {
+            return new Usuario
+            {
+                id_usuario = reader.GetInt32("id"),
+                nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
+                apellido = reader.IsDBNull(reader.GetOrdinal("apellido")) ? "" : reader.GetString("apellido"),
+                email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
+                rol = reader.IsDBNull(reader.GetOrdinal("rol")) ? "" : reader.GetString("rol"),
+                avatar = reader.IsDBNull(reader.GetOrdinal("avatar")) ? null : reader.GetString("avatar")
+            };
+        }
+
+        return null;
     }
 }

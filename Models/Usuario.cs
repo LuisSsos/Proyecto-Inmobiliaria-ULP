@@ -24,6 +24,9 @@ namespace MVC.Models
 
         public string? avatar { get; set; }
 
-        public bool Activo { get; set; } = true;
+[Required(ErrorMessage = "La contraseña es obligatoria")]
+public string contrasena { get; set; } = string.Empty;
+
+public bool Activo { get; set; } = true;
     }
 }

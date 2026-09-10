@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
 namespace MVC.Controllers;
-
+[Authorize]
 public class ReservaController : Controller
 {
     private readonly IRepositorioReserva repositorioReserva;
@@ -152,6 +152,7 @@ public class ReservaController : Controller
 
     // Eliminar get
     [HttpGet]
+    [Authorize(Roles = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         var reserva = repositorioReserva.ObtenerPorId(id);
@@ -166,6 +167,7 @@ public class ReservaController : Controller
 
     // Eliminar post
     [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
     public IActionResult EliminarConfirmado(int id)
     {
         repositorioReserva.Eliminar(id);

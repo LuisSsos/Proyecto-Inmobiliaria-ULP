@@ -10,8 +10,9 @@ public interface IRepositorioUsuario
     void Crear(Usuario usuario);
     void Modificar(Usuario usuario);
     void Eliminar(int id);
+Usuario? ValidarCredenciales(string email, string contrasena);
 
-    void EliminarFisico(int id);
+void EliminarFisico(int id);
 
-    IList<Usuario> GetAllIncludingInactive();
+IList<Usuario> GetAllIncludingInactive();
 }

@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
-
+using Microsoft.AspNetCore.Authorization;
 namespace MVC.Controllers;
-
+[Authorize]
 public class HomeController : Controller
 {
     public IActionResult Index()
