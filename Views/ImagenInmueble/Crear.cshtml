@@ -1,54 +1,30 @@
-@model List<MVC.Models.ImagenInmueble>
-
 @{
-    ViewData["Title"] = "Imágenes del Inmueble";
+    ViewData["Title"] = "Agregar Imagen";
 }
 
-<h2>Imágenes del inmueble</h2>
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Agregar imagen</h2>
 
-<div style="margin-bottom: 20px;">
-    <a asp-action="Crear" asp-route-inmuebleId="@ViewBag.InmuebleId" 
-       style="text-decoration: none; color: white; background-color: #28a745; 
-              padding: 8px 16px; border-radius: 4px; display: inline-block;">
-        Agregar imagen
-    </a>
-</div>
+    <div asp-validation-summary="All" class="alert alert-danger" style="display: none;" id="validationSummary"></div>
 
-@if (Model == null || !Model.Any())
-{
-    <p style="color: #6c757d; font-style: italic;">
-        No hay imágenes cargadas aún.
-    </p>
-}
-else
-{
-    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-        @foreach (var imagen in Model)
-        {
-            <div style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; 
-                        width: 180px; text-align: center;">
-                <img src="@imagen.url" 
-                     style="width: 100%; height: 150px; object-fit: cover; 
-                            border-radius: 4px;" 
-                     alt="Imagen del inmueble" />
-                
-                @if (imagen.esPortada)
-                {
-                    <p style="margin: 8px 0; color: #ffc107; font-weight: bold;">
-                        Portada
-                    </p>
-                }
-                
-                <a asp-action="Eliminar" 
-                   asp-route-id="@imagen.id_imagenInmueble" 
-                   style="display: inline-block; margin-top: 8px; 
-                          text-decoration: none; color: white; 
-                          background-color: #dc3545; padding: 6px 12px; 
-                          border-radius: 4px; font-size: 14px;"
-                   onclick="return confirm('¿Estás seguro de eliminar esta imagen?');">
-                    Eliminar
-                </a>
-            </div>
-        }
+    <div class="card shadow-sm" style="max-width: 400px;">
+        <div class="card-body">
+            <form asp-action="Crear" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="inmuebleId" value="@ViewBag.InmuebleId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" name="archivo" accept="image/*" class="form-control" />
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="esPortada" value="true" class="form-check-input" id="esPortadaCheck" />
+                    <label class="form-check-label" for="esPortadaCheck">Marcar como portada</label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Subir</button>
+                <a asp-action="Index" asp-route-inmuebleId="@ViewBag.InmuebleId" class="btn btn-outline-secondary">Cancelar</a>
+            </form>
+        </div>
     </div>
-}
+</div>
