@@ -8,7 +8,7 @@ namespace MVC.Models
 
         [Required(ErrorMessage = "El nombre del propietario es obligatorio.")]
         [StringLength(100, ErrorMessage = "El nombre no puede superar los 100 caracteres.")]
-        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El nombre solo puede contener letras y espacios.")]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.-]+$", ErrorMessage = "El nombre solo puede contener letras y espacios.")]
         public string Nombre { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El DNI/CUIT es obligatorio")]

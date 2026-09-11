@@ -28,6 +28,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         command.Parameters.AddWithValue("@longitud", i.Longitud);
         command.Parameters.AddWithValue("@precio_por_dia", i.PrecioPorDia);
         command.Parameters.AddWithValue("@porcentaje_sena", i.PorcentajeSeña);
+        command.Parameters.AddWithValue("@estado", i.Estado);
         conexion.Open();
         int id = Convert.ToInt32(command.ExecuteScalar());
         i.IdInmueble = id;
