@@ -198,15 +198,25 @@ public class ReservaController : Controller
         DateTime fechaCancelacion = DateTime.Today;
 
         int diasRestantes = (reserva.fecha_hasta - fechaCancelacion).Days;
+        int diasTotales = (reserva.fecha_hasta - reserva.fecha_desde).Days;
 
         if (diasRestantes < 0)
             diasRestantes = 0;
 
         decimal totalRestante = diasRestantes * reserva.monto_por_dia;
 
-        reserva.multa = totalRestante * 0.50m;
-        reserva.estado = "Cancelada";
-        reserva.fecha_fin_real = fechaCancelacion;
+        if (diasRestantes>=diasTotales*0.5 && diasRestantes<=diasTotales)
+        {
+            reserva.multa = totalRestante * 0.50m;
+            reserva.estado = "Cancelada";
+            reserva.fecha_fin_real = fechaCancelacion;
+        }
+        else if (diasRestantes>0 && diasRestantes<diasTotales*0.5)
+        {
+            reserva.multa = totalRestante * 0.25m;
+            reserva.estado = "Cancelada";
+            reserva.fecha_fin_real = fechaCancelacion;
+        }
 
         repositorioReserva.Modificar(reserva);
 

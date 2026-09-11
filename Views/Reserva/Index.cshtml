@@ -57,7 +57,7 @@
                                 </a>
                                 <button type="button" 
                                         class="btn btn-info btn-sm text-white"
-                                        @@click="abrirModalTerminar(@item.Reserva.id_reserva, '@item.Reserva.fecha_desde.ToString("yyyy-MM-dd")', '@item.Reserva.fecha_hasta.ToString("yyyy-MM-dd")')">
+                                        @@click="abrirModalTerminar(@item.Reserva.id_reserva, '@item.Reserva.fecha_desde.ToString("yyyy-MM-dd")', '@item.Reserva.fecha_hasta.ToString("yyyy-MM-dd")', @item.Reserva.monto_por_dia)">
                                     Terminar
                                 </button>
 
@@ -91,12 +91,12 @@
 
                     <div class="mb-3">
                         <label class="form-label">Fecha de terminación real</label>
-                        <input type="date" class="form-control" v-model="form.fechaFinReal" :min="fechaMin" :max="fechaMax" required />
+                        <input type="date" class="form-control" v-model="form.fechaFinReal" :min="fechaMin" :max="fechaMax" @@change="calcularMulta" required />
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Multa aplicada ($)</label>
-                        <input type="number" step="0.01" class="form-control" v-model.number="form.multa" />
+                        <input type="text" step="0.01" class="form-control" v-model.number="form.multa" readonly/>
                     </div>
                 </div>
                 <div class="modal-footer">

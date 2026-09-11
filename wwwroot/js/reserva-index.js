@@ -22,7 +22,7 @@ createApp({
         }
     },
     methods: {
-        abrirModalTerminar(id, fechaDesde, fechaHasta) {
+        abrirModalTerminar(id, fechaDesde, fechaHasta, montoPorDia) {
             this.errorMsg = '';
             this.fechaMin = fechaDesde;
             this.fechaMax = fechaHasta;
@@ -31,8 +31,37 @@ createApp({
             this.form.fechaFinReal = new Date().toISOString().split('T')[0];
             this.form.multa = 0;
 
+            this.montoPorDia = montoPorDia;
             this.modalBootstrap.show();
         },
+
+        calcularMulta() {
+
+            if (!this.form.fechaFinReal) {
+                this.form.multa = 0;
+                return;
+            }
+
+            const fechaDesde = new Date(this.fechaMin);
+            const fechaHasta = new Date(this.fechaMax);
+            const fechaFinReal = new Date(this.form.fechaFinReal);
+
+            const diasTotales = Math.round (fechaHasta - fechaDesde);
+            const diasRestantes = Math.round(fechaHasta - fechaFinReal);
+            const totalRestante = diasRestantes * this.montoPorDia;
+            const milisegundosDia = 1000 * 60 * 60 * 24;
+
+            if (diasRestantes >= diasTotales * 0.5) {
+                this.form.multa = (totalRestante * 0.50)/milisegundosDia;
+            }
+            else if (diasRestantes > 0) {
+                this.form.multa = (totalRestante * 0.25)/milisegundosDia;
+            }
+            else {
+                this.form.multa = 0;
+            }
+        },
+
         async guardarTerminacion() {
             if (!this.form.fechaFinReal) {
                 this.errorMsg = 'Por favor seleccioá una fecha válida.';
