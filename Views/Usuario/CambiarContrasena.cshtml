@@ -1,0 +1,27 @@
+@model MVC.Models.CambiarContrasenaViewModel
+
+<h3>cambiar contraseña</h3>
+
+<form asp-controller="Usuario"
+      asp-action="cambiarContrasena"
+      method="post">
+     <div asp-validation-summary="ModelOnly" style="color: red;"></div>
+    <div>
+        <label asp-for="ContrasenaActual"></label>
+        <input asp-for="ContrasenaActual">
+        <span asp-validation-for="ContrasenaActual" style="color:red"></span>
+    </div>
+     <div>
+        <label asp-for="NuevaContrasena"></label>
+        <input asp-for="NuevaContrasena">
+        <span asp-validation-for="NuevaContrasena" style="color:red"></span>
+    </div>
+     <div>
+        <label asp-for="ConfirmarContrasena"></label>
+        <input asp-for="ConfirmarContrasena">
+        <span asp-validation-for="ConfirmarContrasena" style="color:red"></span>
+
+    </div>
+
+    <button type="submit">Cambiar contraseña</button>
+    </form>

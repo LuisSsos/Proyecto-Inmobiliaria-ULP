@@ -1,10 +1,17 @@
 @model MVC.Models.Usuario
 
 <h2>Mi Perfil</h2>
-
+ @if (TempData["Success"] != null)
+    {
+        <div class="alerta-success" role="alert">
+            @TempData["Success"]
+        </div>
+    }
 <div asp-validation-summary="All" style="color:red"></div>
 
 <form asp-action="MiPerfil" method="post">
+   
+
     <input type="hidden" asp-for="id_usuario" />
     <div>
         <label>Nombre</label>
@@ -18,9 +25,9 @@
         <label>Email</label>
         <input asp-for="email" />
     </div>
-    <div>
-        <label>Contraseña</label>
-        <input asp-for="contrasena" type="password" />
-    </div>
+ 
     <button type="submit">Guardar cambios</button>
 </form>
+<hr />
+    <partial name="CambiarContrasena"
+        model="new MVC.Models.CambiarContrasenaViewModel()" />

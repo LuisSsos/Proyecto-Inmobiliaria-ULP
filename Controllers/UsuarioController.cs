@@ -113,7 +113,45 @@ public class UsuarioController : Controller
         }
         return View(usuario);
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CambiarContrasena(CambiarContrasenaViewModel modelo)
+    {
+        var idActual = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+        if (!ModelState.IsValid)
+        {
+            var usuario = repositorio.ObtenerPorId(idActual);
+
+            if(usuario == null)
+            {
+                return NotFound();    
+            }
+            return View("miPerfil", usuario);        
+        }    
+        var contrasenaCorrecta = repositorio.VerificarContrasena(idActual, modelo.ContrasenaActual);
+
+        if (!contrasenaCorrecta)
+        {
+            ModelState.AddModelError(
+                nameof(modelo.ContrasenaActual),
+                "La contraseña actual es incorrecta");
+            
+            var usuario = repositorio.ObtenerPorId(idActual);
+
+            if (usuario == null)
+        {
+            return NotFound();
+        }
+
+        return View("MiPerfil", usuario);
+        }
+        repositorio.CambiarContrasena(idActual,modelo.NuevaContrasena);
+
+        TempData["Success"] = "La contraseña se cambio correctamente";
+
+        return RedirectToAction("MiPerfil");
+    }
     [HttpPost]
     public async Task<IActionResult> MiPerfil(Usuario usuario)
     {
@@ -124,13 +162,14 @@ public class UsuarioController : Controller
         usuario.rol = usuarioActual!.rol;
 
         ModelState.Remove(nameof(usuario.rol));
+        ModelState.Remove(nameof(usuario.contrasena));
 
         if (!ModelState.IsValid)
         {
             return View(usuario);
         }
 
-        repositorio.Modificar(usuario);
+        repositorio.ModificarPerfil(usuario);
 
         // recarga la cookie con los datos actualizados, para que el menu muestre el nombre nuevo
         var claims = new List<Claim>
@@ -144,6 +183,7 @@ public class UsuarioController : Controller
         var principal = new ClaimsPrincipal(identity);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+        TempData["Success"] = "Los datos del perfil se guardaron correctamente";
         return RedirectToAction("MiPerfil");
     }
 }

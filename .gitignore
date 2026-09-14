@@ -34,3 +34,6 @@ wwwroot/img/inmuebles/*
 
 # Visual Studio 2015
 .vs/
+
+.env
+.env.*

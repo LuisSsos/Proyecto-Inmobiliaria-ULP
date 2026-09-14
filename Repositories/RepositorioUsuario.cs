@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Metadata;
 using MVC.Models;
 using MySqlConnector;
 
@@ -114,7 +115,28 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
 
         command.ExecuteNonQuery();
     }
+    public void ModificarPerfil(Usuario usuario)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
 
+        var query = @"
+        UPDATE usuario
+        SET nombre = @nombre ,
+            apellido = @apellido,
+            email = @email
+        WHERE id = @id"; 
+
+        using var command = new MySqlCommand(query,connection);
+
+        command.Parameters.AddWithValue("@id", usuario.id_usuario ) ;
+        command.Parameters.AddWithValue("@nombre", usuario.nombre);
+        command.Parameters.AddWithValue("@apellido", usuario.apellido);
+        command.Parameters.AddWithValue("@email", usuario.email);
+
+        command.ExecuteNonQuery();    
+       
+    }
     public void EliminarFisico(int id)
     {
         using var connection = new MySqlConnection(connectionString);
@@ -193,4 +215,46 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
 
         return null;
     }
-}
+    public bool VerificarContrasena(int id_usuario, String ContrasenaActual)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query= @"
+        Select COUNT(*)
+        FROM usuario
+        WHERE id = @id
+        AND password_hash = @contrasenaActual
+        AND activo = 1";
+
+        using var command = new MySqlCommand(query , connection);
+
+        command.Parameters.AddWithValue("@id", id_usuario);
+        command.Parameters.AddWithValue("@contrasenaActual",ContrasenaActual);
+
+        var cantidad = Convert.ToInt32(command.ExecuteScalar());
+
+        return cantidad > 0 ;   
+    }
+    public void CambiarContrasena(int idUsuario,string nuevaContrasena)
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query = @"
+            UPDATE usuario
+            SET password_hash = @nuevaContrasena
+            WHERE id = @id
+             AND activo = 1";
+
+        using var command = new MySqlCommand(query, connection);
+
+        command.Parameters.AddWithValue("@id", idUsuario);
+        command.Parameters.AddWithValue(
+        "@nuevaContrasena",
+        nuevaContrasena);
+
+    command.ExecuteNonQuery();
+    }
+    
+}  

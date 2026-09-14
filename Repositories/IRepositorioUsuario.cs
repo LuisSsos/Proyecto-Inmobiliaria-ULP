@@ -9,6 +9,9 @@ public interface IRepositorioUsuario
     bool ExisteEmail(string email, int idExcluir = 0);
     void Crear(Usuario usuario);
     void Modificar(Usuario usuario);
+    void ModificarPerfil(Usuario usuario);
+    bool VerificarContrasena(int usuario, String contrasenaActual);
+    void CambiarContrasena(int id_usuario,String nuevaContrasena);
     void Eliminar(int id);
 Usuario? ValidarCredenciales(string email, string contrasena);
 

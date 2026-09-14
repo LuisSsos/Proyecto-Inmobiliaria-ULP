@@ -19,6 +19,8 @@ DROP TABLE IF EXISTS `inmueble`;
 DROP TABLE IF EXISTS `inquilino`;
 DROP TABLE IF EXISTS `propietario`;
 DROP TABLE IF EXISTS `tipo_inmueble`;
+DROP TABLE IF EXISTS `usuario`;
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -177,7 +179,7 @@ COLLATE=utf8mb4_general_ci;
 
 
 CREATE TABLE `usuario` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
   `password_hash` varchar(255) DEFAULT NULL,
   `rol` varchar(255) DEFAULT NULL,
@@ -521,6 +523,7 @@ VALUES
   NULL,
   52000.00,
   0.00,
+  
   'Cancelada'
 ),
 
