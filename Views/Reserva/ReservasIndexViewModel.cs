@@ -8,4 +8,7 @@ public class ReservaIndexViewModel
 
     public Inmueble Inmueble { get; set; } = null!;
 
+    public Usuario? UsuarioCreador { get; set; }
+
+    public Usuario? UsuarioTerminador { get; set; }
 }

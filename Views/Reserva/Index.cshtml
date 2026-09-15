@@ -30,9 +30,17 @@
                     <th>Monto por día</th>
                     <th>Multa</th>
                     <th>Estado</th>
+
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <th>Creado por</th>
+                        <th>Terminado por</th>
+                    }
+
                     <th>Acciones</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -40,36 +48,69 @@
                         <td>@item.Reserva.id_reserva</td>
                         <td>@item.Inquilino.nombre_completo</td>
                         <td>@item.Inmueble.Direccion</td>
-                        <td>@item.Reserva.fecha_desde.ToString("dd/MM/yyyy")</td>
-                        <td>@item.Reserva.fecha_hasta.ToString("dd/MM/yyyy")</td>
+
                         <td>
-                            @(item.Reserva.fecha_fin_real.HasValue
-                                ? item.Reserva.fecha_fin_real.Value.ToString("dd/MM/yyyy")
-                                : "-")
+                            @item.Reserva.fecha_desde.ToString("dd/MM/yyyy")
                         </td>
+
+                        <td>
+                            @item.Reserva.fecha_hasta.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td>
+                            @(item.Reserva.fecha_fin_real.HasValue? item.Reserva.fecha_fin_real.Value.ToString("dd/MM/yyyy"): "-")
+                        </td>
+
                         <td>$ @item.Reserva.monto_por_dia</td>
+
                         <td>$ @item.Reserva.multa</td>
+
                         <td>@item.Reserva.estado</td>
+
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <td>
+                                @(item.UsuarioCreador != null? item.UsuarioCreador.nombre + " " + item.UsuarioCreador.apellido: "-")
+                            </td>
+
+                            <td>
+                                @(item.UsuarioTerminador != null? item.UsuarioTerminador.nombre + " " + item.UsuarioTerminador.apellido: "-")
+                            </td>
+                        }
+
                         <td>
                             <div class="d-flex gap-1">
-                                <a asp-action="Editar" asp-route-id="@item.Reserva.id_reserva" class="btn btn-warning btn-sm">
+
+                                <a asp-action="Editar"
+                                   asp-route-id="@item.Reserva.id_reserva"
+                                   class="btn btn-warning btn-sm">
                                     Editar
                                 </a>
-                                <button type="button" 
+
+                                <button type="button"
                                         class="btn btn-info btn-sm text-white"
                                         @@click="abrirModalTerminar(@item.Reserva.id_reserva, '@item.Reserva.fecha_desde.ToString("yyyy-MM-dd")', '@item.Reserva.fecha_hasta.ToString("yyyy-MM-dd")', @item.Reserva.monto_por_dia)">
                                     Terminar
                                 </button>
 
-                                <a asp-action="Renovar" asp-route-id="@item.Reserva.id_reserva" class="btn btn-success btn-sm">
+                                <a asp-action="Renovar"
+                                   asp-route-id="@item.Reserva.id_reserva"
+                                   class="btn btn-success btn-sm">
                                     Renovar
                                 </a>
-                                <a asp-action="Cancelar" asp-route-id="@item.Reserva.id_reserva" class="btn btn-secondary btn-sm">
+
+                                <a asp-action="Cancelar"
+                                   asp-route-id="@item.Reserva.id_reserva"
+                                   class="btn btn-secondary btn-sm">
                                     Cancelar
                                 </a>
-                                <a asp-action="Eliminar" asp-route-id="@item.Reserva.id_reserva" class="btn btn-danger btn-sm">
+
+                                <a asp-action="Eliminar"
+                                   asp-route-id="@item.Reserva.id_reserva"
+                                   class="btn btn-danger btn-sm">
                                     Eliminar
                                 </a>
+
                             </div>
                         </td>
                     </tr>
@@ -77,40 +118,79 @@
             </tbody>
         </table>
     }
+
     <div class="modal fade" id="modalTerminar" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title">Terminar Reserva Anticipadamente (ID: {{ form.idReserva }})</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        Terminar Reserva Anticipadamente (ID: {{ form.idReserva }})
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
                 </div>
+
                 <div class="modal-body">
+
                     <div v-if="errorMsg" class="alert alert-danger">
                         {{ errorMsg }}
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Fecha de terminación real</label>
-                        <input type="date" class="form-control" v-model="form.fechaFinReal" :min="fechaMin" :max="fechaMax" @@change="calcularMulta" required />
+                        <label class="form-label">
+                            Fecha de terminación real
+                        </label>
+
+                        <input type="date"
+                               class="form-control"
+                               v-model="form.fechaFinReal"
+                               :min="fechaMin"
+                               :max="fechaMax"
+                               @@change="calcularMulta"
+                               required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Multa aplicada ($)</label>
-                        <input type="text" step="0.01" class="form-control" v-model.number="form.multa" readonly/>
+                        <label class="form-label">
+                            Multa aplicada ($)
+                        </label>
+
+                        <input type="text"
+                               step="0.01"
+                               class="form-control"
+                               v-model.number="form.multa"
+                               readonly />
                     </div>
+
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-warning" @@click="guardarTerminacion" :disabled="guardando">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-warning"
+                            @@click="guardarTerminacion"
+                            :disabled="guardando">
                         {{ guardando ? 'Guardando...' : 'Confirmar terminación' }}
                     </button>
+
                 </div>
+
             </div>
         </div>
     </div>
 
 </div>
-
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

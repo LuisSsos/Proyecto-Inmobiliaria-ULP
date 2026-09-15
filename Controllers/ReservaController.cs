@@ -11,15 +11,18 @@ public class ReservaController : Controller
     private readonly IRepositorioReserva repositorioReserva;
     private readonly IRepositorioInquilino repositorioInquilino;
     private readonly IRepositorioInmueble repositorioInmueble;
+    private readonly IRepositorioUsuario repositorioUsuario;
 
     public ReservaController(
         IRepositorioReserva repositorioReserva,
         IRepositorioInquilino repositorioInquilino,
-        IRepositorioInmueble repositorioInmueble)
+        IRepositorioInmueble repositorioInmueble,
+        IRepositorioUsuario repositorioUsuario)
     {
         this.repositorioReserva = repositorioReserva;
         this.repositorioInquilino = repositorioInquilino;
         this.repositorioInmueble = repositorioInmueble;
+        this.repositorioUsuario = repositorioUsuario;
     }
 
 
@@ -34,16 +37,19 @@ public class ReservaController : Controller
         var reservas = repositorioReserva.ObtenerTodos();
         var inquilinos = repositorioInquilino.ObtenerTodos();
         var inmuebles = repositorioInmueble.GetAll();
+        var usuarios = repositorioUsuario.ObtenerTodos();
 
         var modelo = reservas.Select(r => new ReservaIndexViewModel
         {
             Reserva = r,
             Inquilino = inquilinos.FirstOrDefault(i => i.id_inquilino == r.inquilino_id)!,
-            Inmueble = inmuebles.FirstOrDefault(i => i.IdInmueble == r.inmueble_id)!
+            Inmueble = inmuebles.FirstOrDefault(i => i.IdInmueble == r.inmueble_id)!,
+            UsuarioCreador = r.usuario_creador_id.HasValue? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_creador_id.Value): null,
+
+            UsuarioTerminador = r.usuario_terminador_id.HasValue? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_terminador_id.Value): null
         }).ToList();
 
         return View(modelo);
-
     }
 
 
