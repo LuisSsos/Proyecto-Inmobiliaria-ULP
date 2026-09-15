@@ -14,6 +14,9 @@ namespace MVC.Models
         public decimal multa { get; set; }
         public string estado { get; set; } = string.Empty;
 
+        public int? usuario_creador_id { get; set; }
+        public int? usuario_terminador_id { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (fecha_desde >= fecha_hasta)

@@ -1,0 +1,48 @@
+@model List<MVC.Models.Pago>
+
+<h2>Pagos</h2>
+
+<a asp-action="Crear">+ Nuevo pago</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Reserva</th>
+            <th>Concepto</th>
+            <th>Fecha</th>
+            <th>Importe</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var pago in Model)
+        {
+            <tr>
+                <td>@pago.id_pago</td>
+                <td>@pago.ReservaId</td>
+                <td>@pago.concepto</td>
+                <td>@pago.fecha_pago.ToShortDateString()</td>
+                <td>@pago.importe</td>
+                <td>@pago.estado</td>
+
+                <td>
+                    @if (pago.Activo)
+                    {
+                        <form asp-action="Anular"
+                              asp-route-id="@pago.id_pago"
+                              method="post">
+
+                            <button type="submit">
+                                Anular
+                            </button>
+
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

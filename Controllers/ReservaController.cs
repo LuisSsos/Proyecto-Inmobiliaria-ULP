@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace MVC.Controllers;
 
 [Authorize]
@@ -105,6 +106,7 @@ public class ReservaController : Controller
         reserva.estado = "Pendiente";
         reserva.fecha_fin_real = null;
         reserva.multa = 0;
+        reserva.usuario_creador_id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         repositorioReserva.Crear(reserva);
 
         return RedirectToAction("Index", "Inmueble");
@@ -205,18 +207,19 @@ public class ReservaController : Controller
 
         decimal totalRestante = diasRestantes * reserva.monto_por_dia;
 
-        if (diasRestantes>=diasTotales*0.5 && diasRestantes<=diasTotales)
+        if (diasRestantes >= diasTotales * 0.5 && diasRestantes <= diasTotales)
         {
             reserva.multa = totalRestante * 0.50m;
             reserva.estado = "Cancelada";
             reserva.fecha_fin_real = fechaCancelacion;
         }
-        else if (diasRestantes>0 && diasRestantes<diasTotales*0.5)
+        else if (diasRestantes > 0 && diasRestantes < diasTotales * 0.5)
         {
             reserva.multa = totalRestante * 0.25m;
             reserva.estado = "Cancelada";
             reserva.fecha_fin_real = fechaCancelacion;
         }
+        reserva.usuario_terminador_id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         repositorioReserva.Modificar(reserva);
 
@@ -248,6 +251,7 @@ public class ReservaController : Controller
         reserva.fecha_fin_real = dto.FechaFinReal;
         reserva.multa = dto.Multa;
         reserva.estado = "Finalizada anticipadamente";
+        reserva.usuario_terminador_id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         repositorioReserva.Modificar(reserva);
 

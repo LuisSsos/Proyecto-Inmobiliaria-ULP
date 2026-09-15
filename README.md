@@ -92,6 +92,10 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 * Implementación de un **middleware de manejo de excepciones** a nivel global, que captura cualquier error no controlado de la aplicación y redirige a una vista de error personalizada, evitando mostrar el detalle técnico al usuario.
 * Desarrollo del módulo de **imagenes de inmuebles**, permitiendo subir, listar y eliminar fotos asociadas a cada propiedad. La carga de imagenes se realiza mediante almacenamiento local guardando en la computadora cada imagen subida y en la base de datos guardando la ubicación.
 * Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.
+* Se agregaron los campos usuario_creador_id y usuario_terminador_id a las reservas, permitiendo registrar qué usuario creó y finalizó/canceló cada reserva.
+* Se agregaron los campos usuario_creador_id y usuario_anulador_id a los pagos, registrando qué usuario creó y anuló cada pago.
+
+
 
 ### Actualización de esquema: campo `activo`
 
