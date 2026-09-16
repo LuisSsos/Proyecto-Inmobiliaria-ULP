@@ -88,7 +88,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         using var connection = new MySqlConnection(connectionString);
         connection.Open();
 
-        var query = "INSERT INTO inquilino (nombre_completo, dni, email, telefono) VALUES (@nombre, @dni, @email, @telefono, 1)";
+        var query = @"INSERT INTO inquilino(nombre_completo, dni, email, telefono, activo) VALUES (@nombre, @dni, @email, @telefono, @activo)";
 
         using var command = new MySqlCommand(query, connection);
 
@@ -96,6 +96,8 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         command.Parameters.AddWithValue("@dni", inquilino.dni);
         command.Parameters.AddWithValue("@email", (object?)inquilino.email ?? DBNull.Value);
         command.Parameters.AddWithValue("@telefono", (object?)inquilino.telefono ?? DBNull.Value);
+        command.Parameters.AddWithValue("@activo", inquilino.activo);
+
 
         command.ExecuteNonQuery();
     }
