@@ -59,8 +59,16 @@
                 <td>
                     <a asp-action="Editar" asp-route-id="@item.IdInmueble">Editar</a> |
                     <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a> |
-                    <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble">Reservar</a> |
-                    <a asp-controller="ImagenInmueble" asp-action="Index" asp-route-inmuebleId="@item.IdInmueble">Ver imágenes</a>
+                    @if (item.Estado != "Suspendido")
+                    {
+                        <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble">Reservar</a>
+                        <text> | </text>
+                    }
+                    <form asp-action="CambiarEstado" asp-route-id="@item.IdInmueble" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            @(item.Estado == "Suspendido" ? "Reactivar" : "Suspender")
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

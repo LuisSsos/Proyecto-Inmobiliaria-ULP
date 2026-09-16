@@ -44,9 +44,9 @@ public class ReservaController : Controller
             Reserva = r,
             Inquilino = inquilinos.FirstOrDefault(i => i.id_inquilino == r.inquilino_id)!,
             Inmueble = inmuebles.FirstOrDefault(i => i.IdInmueble == r.inmueble_id)!,
-            UsuarioCreador = r.usuario_creador_id.HasValue? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_creador_id.Value): null,
+            UsuarioCreador = r.usuario_creador_id.HasValue ? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_creador_id.Value) : null,
 
-            UsuarioTerminador = r.usuario_terminador_id.HasValue? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_terminador_id.Value): null
+            UsuarioTerminador = r.usuario_terminador_id.HasValue ? usuarios.FirstOrDefault(u => u.id_usuario == r.usuario_terminador_id.Value) : null
         }).ToList();
 
         return View(modelo);
@@ -63,6 +63,11 @@ public class ReservaController : Controller
 
         if (inmueble == null)
         {
+            if (inmueble.Estado == "Suspendido")
+            {
+                TempData["Error"] = "Este inmueble está suspendido y no se puede reservar.";
+                return RedirectToAction("Index", "Inmueble");
+            }
             return NotFound();
         }
 
@@ -90,6 +95,11 @@ public class ReservaController : Controller
 
         if (inmueble == null)
         {
+            if (inmueble.Estado == "Suspendido")
+            {
+                TempData["Error"] = "Este inmueble está suspendido y no se puede reservar.";
+                return RedirectToAction("Index", "Inmueble");
+            }
             return NotFound();
         }
 

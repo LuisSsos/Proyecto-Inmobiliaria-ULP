@@ -150,6 +150,35 @@ public class InmuebleController : Controller
         }
     }
 
+    [HttpPost]
+    public IActionResult CambiarEstado(int id)
+    {
+        try
+        {
+            var inmueble = repoInmueble.GetById(id);
+
+            if (inmueble == null)
+            {
+                return NotFound();
+            }
+
+            // alterna entre suspendido y disponible
+            var nuevoEstado = inmueble.Estado == "Suspendido" ? "Disponible" : "Suspendido";
+            repoInmueble.CambiarEstado(id, nuevoEstado);
+
+            TempData["Exito"] = nuevoEstado == "Suspendido"
+                ? "El inmueble fue suspendido y ya no aparece en los listados para alquilar."
+                : "El inmueble volvió a estar disponible.";
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception)
+        {
+            TempData["Error"] = "Ocurrió un error al cambiar el estado del inmueble.";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
     // MODIFICAR - GET
     [HttpGet]
     public IActionResult Editar(int id)

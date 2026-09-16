@@ -12,4 +12,6 @@ public interface IRepositorioInmueble
     IList<Inmueble> GetAll();
     IList<Inmueble> GetAllIncludingInactive();
 
+    int CambiarEstado(int id, string estado);
+
 }

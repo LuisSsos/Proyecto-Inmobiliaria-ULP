@@ -225,4 +225,15 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
         return lista;
     }
+
+    public int CambiarEstado(int id, string estado)
+{
+    using var conexion = new MySqlConnection(connectionString);
+    string sql = @"UPDATE inmueble SET estado = @estado WHERE id = @id;";
+    using var command = new MySqlCommand(sql, conexion);
+    command.Parameters.AddWithValue("@estado", estado);
+    command.Parameters.AddWithValue("@id", id);
+    conexion.Open();
+    return command.ExecuteNonQuery();
+}
 }

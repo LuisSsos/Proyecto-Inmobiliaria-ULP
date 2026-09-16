@@ -94,7 +94,7 @@ Se podrá ver el  diagrama relacional en la carpeta db.
 * Incorporación de la imagen de portada del inmueble en el listado principal de **Inmuebles**, mostrando la foto (si existe) junto al resto de los datos.
 * Se agregaron los campos usuario_creador_id y usuario_terminador_id a las reservas, permitiendo registrar qué usuario creó y finalizó/canceló cada reserva.
 * Se agregaron los campos usuario_creador_id y usuario_anulador_id a los pagos, registrando qué usuario creó y anuló cada pago.
-
+* Implementación de **suspensión de inmuebles**: un Administrador o Empleado puede suspender temporalmente un inmueble desde el listado, lo que hace que deje de aparecer disponible para nuevas reservas sin afectar las reservas ya existentes. El inmueble puede reactivarse en cualquier momento.
 
 
 ### Actualización de esquema: campo `activo`
