@@ -9,25 +9,53 @@
     }
 <div asp-validation-summary="All" style="color:red"></div>
 
-<form asp-action="MiPerfil" method="post">
+<form asp-action="MiPerfil" method="post" enctype="multipart/form-data">
    
 
     <input type="hidden" asp-for="id_usuario" />
-    <div>
+    <div class="div-perfil">
+       <label>Foto de Perfil</label>
+       <br />
+       @if (!string.IsNullOrEmpty(Model.avatar))
+       {
+            <img src="@Model.avatar"
+            alt="foto de perfil"
+            class="avatar-img"/>  
+        }
+        else {
+            <img src="/img/usuarios/default-avatar.png"
+            alt="Foto de perfil predeterminada"
+            class="avatar-img"/>
+        }
+    </div>
+    <div class="div-avatar">
+        <label>Nueva foto de perfil</label>
+        <input asp-for="avatarFile" type="file" />
+    </div>
+    <div class="div-perfil">
         <label>Nombre</label>
         <input asp-for="nombre" />
     </div>
-    <div>
+    <div class="div-perfil">
         <label>Apellido</label>
         <input asp-for="apellido" />
     </div>
-    <div>
+    <div class="div-perfil">
         <label>Email</label>
         <input asp-for="email" />
     </div>
  
-    <button type="submit">Guardar cambios</button>
+    <button type="submit" class="btn-perfil">Guardar cambios</button>
 </form>
+    @if (!string.IsNullOrEmpty(Model.avatar))
+{   
+    <p>PRUEBA: EL AVATAR NO ES NULL</p>
+    <form asp-action="EliminarAvatar" method="post">
+        <button type="submit" class="btn-eliminar-avatar">
+            Eliminar foto
+        </button>
+    </form>
+}
 <hr />
     <partial name="CambiarContrasena"
         model="new MVC.Models.CambiarContrasenaViewModel()" />

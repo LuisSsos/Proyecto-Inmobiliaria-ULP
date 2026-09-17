@@ -186,3 +186,49 @@ a:hover {
         font-size: 16px;
     }
 }
+/*Perfil del usuario*/
+
+
+/* PERFIL DEL USUARIO */
+
+.form-perfil {
+    width: 450px;
+    margin: 30px auto;
+    padding: 25px;
+
+    border: 2px solid black;
+    border-radius: 8px;
+
+    box-sizing: border-box;
+}
+
+.div-perfil,
+.div-avatar {
+    margin-bottom: 15px;
+}
+
+.div-perfil label,
+.div-avatar label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.div-perfil input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.avatar-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+
+    display: block;
+    margin: 10px auto;
+}
+
+.btn-perfil {
+    padding: 8px 15px;
+}

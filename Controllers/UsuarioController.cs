@@ -12,10 +12,12 @@ namespace MVC.Controllers;
 public class UsuarioController : Controller
 {
     private readonly IRepositorioUsuario repositorio;
+    private readonly IWebHostEnvironment environment;
 
-    public UsuarioController(IRepositorioUsuario repositorio)
+    public UsuarioController(IRepositorioUsuario repositorio,IWebHostEnvironment environment)
     {
         this.repositorio = repositorio;
+        this.environment = environment;
     }
 
     [Authorize(Roles = "Administrador")]
@@ -159,7 +161,13 @@ public class UsuarioController : Controller
         usuario.id_usuario = idActual;
 
         var usuarioActual = repositorio.ObtenerPorId(idActual);
+        if(usuarioActual == null)
+        {
+            return NotFound();
+        }
+        
         usuario.rol = usuarioActual!.rol;
+        usuario.avatar = usuarioActual.avatar;
 
         ModelState.Remove(nameof(usuario.rol));
         ModelState.Remove(nameof(usuario.contrasena));
@@ -168,7 +176,41 @@ public class UsuarioController : Controller
         {
             return View(usuario);
         }
+        Console.WriteLine("===== PRUEBA AVATAR =====");
+    Console.WriteLine("Cantidad de archivos recibidos: " + Request.Form.Files.Count);
 
+    if (usuario.avatarFile == null)
+    {
+        Console.WriteLine("avatarFile ES NULL");
+    }
+    else
+    {
+        Console.WriteLine("Archivo recibido: " + usuario.avatarFile.FileName);
+        Console.WriteLine("Tamaño: " + usuario.avatarFile.Length);
+    }
+        if(usuario.avatarFile != null)
+        {
+            string wwwPath= environment.WebRootPath;
+
+            string carpeta = Path.Combine(
+                wwwPath,"img","usuarios"
+            );
+            if (!Directory.Exists(carpeta))
+            {
+                Directory.CreateDirectory(carpeta);
+            }
+            string extension = Path.GetExtension(usuario.avatarFile.FileName);
+
+            String nombreArchivo = "avatar_" + idActual + extension ;
+
+            string rutaCompleta= Path.Combine(carpeta, nombreArchivo);
+
+            using(FileStream stream = new FileStream(rutaCompleta, FileMode.Create))
+            {
+                usuario.avatarFile.CopyTo(stream);
+            }
+            usuario.avatar = "/img/usuarios/" + nombreArchivo;
+        }
         repositorio.ModificarPerfil(usuario);
 
         // recarga la cookie con los datos actualizados, para que el menu muestre el nombre nuevo
@@ -185,5 +227,43 @@ public class UsuarioController : Controller
 
         TempData["Success"] = "Los datos del perfil se guardaron correctamente";
         return RedirectToAction("MiPerfil");
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EliminarAvatar()
+    {
+        Console.WriteLine("===== ENTRO A ELIMINAR AVATAR =====");
+
+        var idActual = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var usuario = repositorio.ObtenerPorId(idActual);
+
+        if(usuario == null)
+        {
+            return NotFound();
+        }
+        if (!string.IsNullOrEmpty(usuario.avatar))
+        {
+           string nombreArchivo = Path.GetFileName(usuario.avatar);
+
+        string rutaCompleta = Path.Combine(
+            environment.WebRootPath,"img","usuarios",nombreArchivo);
+        if(System.IO.File.Exists(rutaCompleta))
+            {
+                System.IO.File.Delete(rutaCompleta);
+            }
+
+        }
+        usuario.avatar = null ;
+        repositorio.ModificarPerfil(usuario);
+        var usuarioPrueba = repositorio.ObtenerPorId(idActual);
+
+    Console.WriteLine("AVATAR QUE SE INTENTA GUARDAR: " + usuario.avatar);
+    Console.WriteLine(
+    "AVATAR RECUPERADO DE BD: " +
+    (usuarioPrueba?.avatar ?? "NULL")
+    );
+        TempData["Success"] = "La foto de perfil fue eliminada correctamente";
+        return RedirectToAction("MiPerfil") ;
     }
 }

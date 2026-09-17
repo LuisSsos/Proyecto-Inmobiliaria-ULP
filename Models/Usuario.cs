@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace MVC.Models
 {
@@ -22,7 +23,8 @@ namespace MVC.Models
         [Required(ErrorMessage = "El rol es obligatorio")]
         public string rol { get; set; } = string.Empty;
 
-        public string? avatar { get; set; }
+        public string? avatar { get; set ;} 
+	public IFormFile? avatarFile {get; set;}
 
 [Required(ErrorMessage = "La contraseña es obligatoria")]
 public string contrasena { get; set; } = string.Empty;

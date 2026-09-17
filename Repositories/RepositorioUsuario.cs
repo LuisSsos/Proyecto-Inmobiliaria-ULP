@@ -124,7 +124,8 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         UPDATE usuario
         SET nombre = @nombre ,
             apellido = @apellido,
-            email = @email
+            email = @email,
+            avatar = @avatar
         WHERE id = @id"; 
 
         using var command = new MySqlCommand(query,connection);
@@ -133,6 +134,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         command.Parameters.AddWithValue("@nombre", usuario.nombre);
         command.Parameters.AddWithValue("@apellido", usuario.apellido);
         command.Parameters.AddWithValue("@email", usuario.email);
+        command.Parameters.AddWithValue("@avatar", (object?)usuario.avatar ?? DBNull.Value);
 
         command.ExecuteNonQuery();    
        
