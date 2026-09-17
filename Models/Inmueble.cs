@@ -45,5 +45,7 @@ namespace MVC.Models
         public Propietario? Titular { get; set; }
         public TipoInmueble? Tipo { get; set; }
 
+        public int CantidadReservas { get; set; }
+
     }
 }

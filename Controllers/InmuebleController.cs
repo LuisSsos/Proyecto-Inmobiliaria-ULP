@@ -28,83 +28,83 @@ public class InmuebleController : Controller
 
     // LISTAR
     [HttpGet]
-[HttpGet]
-public IActionResult Index(
+    [HttpGet]
+    public IActionResult Index(
     int pagina = 1,
     string? estado = null,
     int? propietarioId = null)
-{
-    try
     {
-        int cantidadPorPagina = 10;
-
-        if (pagina < 1)
+        try
         {
-            pagina = 1;
-        }
+            int cantidadPorPagina = 10;
 
-        var lista = repoInmueble.ObtenerPaginado(
-            pagina,
-            cantidadPorPagina,
-            estado,
-            propietarioId);
+            if (pagina < 1)
+            {
+                pagina = 1;
+            }
 
-        int totalInmuebles =
-            repoInmueble.ContarInmuebles(
+            var lista = repoInmueble.ObtenerPaginado(
+                pagina,
+                cantidadPorPagina,
                 estado,
                 propietarioId);
 
-        int totalPaginas = (int)Math.Ceiling(
-            totalInmuebles / (double)cantidadPorPagina);
+            int totalInmuebles =
+                repoInmueble.ContarInmuebles(
+                    estado,
+                    propietarioId);
 
-        var imagenesPorInmueble =
-            new Dictionary<int, ImagenInmueble>();
+            int totalPaginas = (int)Math.Ceiling(
+                totalInmuebles / (double)cantidadPorPagina);
 
-        foreach (var inmueble in lista)
-        {
-            var imagenes =
-                repoImagen.ObtenerPorInmueble(
-                    inmueble.IdInmueble);
+            var imagenesPorInmueble =
+                new Dictionary<int, ImagenInmueble>();
 
-            var portada =
-                imagenes.FirstOrDefault(
-                    img => img.esPortada)
-                ?? imagenes.FirstOrDefault();
-
-            if (portada != null)
+            foreach (var inmueble in lista)
             {
-                imagenesPorInmueble[
-                    inmueble.IdInmueble] = portada;
+                var imagenes =
+                    repoImagen.ObtenerPorInmueble(
+                        inmueble.IdInmueble);
+
+                var portada =
+                    imagenes.FirstOrDefault(
+                        img => img.esPortada)
+                    ?? imagenes.FirstOrDefault();
+
+                if (portada != null)
+                {
+                    imagenesPorInmueble[
+                        inmueble.IdInmueble] = portada;
+                }
             }
+
+            ViewBag.ImagenesPorInmueble =
+                imagenesPorInmueble;
+
+            ViewBag.PaginaActual =
+                pagina;
+
+            ViewBag.TotalPaginas =
+                totalPaginas;
+
+            ViewBag.CantidadPorPagina =
+                cantidadPorPagina;
+
+            ViewBag.EstadoActual =
+                estado;
+
+            ViewBag.PropietarioActual =
+                propietarioId;
+
+            return View(lista);
         }
-
-        ViewBag.ImagenesPorInmueble =
-            imagenesPorInmueble;
-
-        ViewBag.PaginaActual =
-            pagina;
-
-        ViewBag.TotalPaginas =
-            totalPaginas;
-
-        ViewBag.CantidadPorPagina =
-            cantidadPorPagina;
-
-        ViewBag.EstadoActual =
-            estado;
-
-        ViewBag.PropietarioActual =
-            propietarioId;
-
-        return View(lista);
+        catch (Exception)
+        {
+            return StatusCode(
+                500,
+                "Ocurrió un error al obtener los inmuebles.");
+        }
     }
-    catch (Exception)
-    {
-        return StatusCode(
-            500,
-            "Ocurrió un error al obtener los inmuebles.");
-    }
-}
 
     // CREAR - GET
     [HttpGet]
@@ -317,6 +317,49 @@ public IActionResult Index(
         catch (Exception)
         {
             return StatusCode(500, "Ocurrió un error al buscar propietarios.");
+        }
+    }
+
+    [HttpGet]
+    public IActionResult MasReservados(
+    int dias = 365,
+    int pagina = 1)
+    {
+        try
+        {
+            int cantidadPorPagina = 10;
+
+            if (dias < 1)
+            {
+                dias = 365;
+            }
+
+            if (pagina < 1)
+            {
+                pagina = 1;
+            }
+
+            var lista = repoInmueble.ObtenerMasReservados(
+                dias,
+                pagina,
+                cantidadPorPagina);
+
+            int totalInmuebles =
+                repoInmueble.ContarMasReservados(dias);
+
+            int totalPaginas = (int)Math.Ceiling(
+                totalInmuebles / (double)cantidadPorPagina);
+
+            ViewBag.Dias = dias;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.CantidadPorPagina = cantidadPorPagina;
+
+            return View(lista);
+        }
+        catch (Exception)
+        {
+            return StatusCode( 500, "Ocurrió un error al obtener los inmuebles más reservados.");
         }
     }
 }

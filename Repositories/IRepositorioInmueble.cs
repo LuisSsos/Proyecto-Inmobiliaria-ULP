@@ -15,4 +15,6 @@ public interface IRepositorioInmueble
     int CambiarEstado(int id, string estado);
     IList<Inmueble> ObtenerPaginado( int pagina, int cantidadPorPagina, string? estado, int? propietarioId);
     int ContarInmuebles( string? estado, int? propietarioId);
+    IList<Inmueble> ObtenerMasReservados(int dias, int pagina, int cantidadPorPagina);
+    int ContarMasReservados(int dias);
 }

@@ -338,15 +338,11 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
         return lista;
     }
-    public int ContarInmuebles( string? estado, int? propietarioId)
+    public int ContarInmuebles(string? estado, int? propietarioId)
     {
         using var conexion = new MySqlConnection(connectionString);
 
-        string sql = @"
-        SELECT COUNT(*)
-        FROM inmueble i
-        WHERE i.activo = 1
-    ";
+        string sql = "SELECT COUNT(*) FROM inmueble i WHERE i.activo = 1";
 
         if (!string.IsNullOrWhiteSpace(estado))
         {
@@ -367,11 +363,158 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
         if (propietarioId.HasValue)
         {
-            command.Parameters.AddWithValue(
-                "@propietarioId",
-                propietarioId.Value
-            );
+            command.Parameters.AddWithValue("@propietarioId", propietarioId.Value);
         }
+
+        conexion.Open();
+
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
+
+    public IList<Inmueble> ObtenerMasReservados(
+     int dias,
+     int pagina,
+     int cantidadPorPagina)
+    {
+        var lista = new List<Inmueble>();
+
+        using var conexion = new MySqlConnection(connectionString);
+
+        int offset = (pagina - 1) * cantidadPorPagina;
+
+        string sql = @"SELECT 
+            i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, i.cupo,
+            i.latitud, i.longitud, i.precio_por_dia, i.porcentaje_sena, i.estado, i.activo,
+
+            p.nombre AS PropietarioNombre,
+            p.dni_cuit,
+
+            t.nombre AS TipoNombre,
+
+            COUNT(r.id) AS CantidadReservas
+
+        FROM inmueble i
+
+        INNER JOIN propietario p
+            ON i.propietario_id = p.id
+
+        INNER JOIN tipo_inmueble t
+            ON i.tipo_inmueble_id = t.id
+
+        INNER JOIN reserva r
+            ON i.id = r.inmueble_id
+
+        WHERE i.activo = 1
+          AND r.fecha_desde >= DATE_SUB(
+              CURDATE(),
+              INTERVAL @dias DAY
+          )
+
+        GROUP BY
+            i.id,
+            i.propietario_id,
+            i.tipo_inmueble_id,
+            i.direccion,
+            i.cupo,
+            i.latitud,
+            i.longitud,
+            i.precio_por_dia,
+            i.porcentaje_sena,
+            i.estado,
+            i.activo,
+            p.nombre,
+            p.dni_cuit,
+            t.nombre
+
+        ORDER BY CantidadReservas DESC
+
+        LIMIT @cantidadPorPagina
+        OFFSET @offset;
+    ";
+
+        using var command = new MySqlCommand(sql, conexion);
+
+        command.Parameters.AddWithValue("@dias", dias);
+
+        command.Parameters.AddWithValue( "@cantidadPorPagina", cantidadPorPagina);
+
+        command.Parameters.AddWithValue( "@offset", offset);
+
+        conexion.Open();
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            lista.Add(new Inmueble
+            {
+                IdInmueble = reader.GetInt32("id"),
+                PropietarioId = reader.GetInt32("propietario_id"),
+
+                TipoInmuebleId = reader.GetInt32("tipo_inmueble_id"),
+
+                Direccion = reader.GetString("direccion"),
+
+                Cupo = reader.GetInt32("cupo"),
+
+                Latitud = reader.GetDecimal("latitud"),
+
+                Longitud = reader.GetDecimal("longitud"),
+
+                PrecioPorDia = reader.GetDecimal("precio_por_dia"),
+
+                PorcentajeSeña = reader.GetDecimal("porcentaje_sena"),
+
+                Estado = reader.GetString("estado"),
+
+                Activo = reader.GetBoolean("activo"),
+
+                CantidadReservas = reader.GetInt32("CantidadReservas"),
+
+                Titular = new Propietario
+                {
+                    IdPropietario = reader.GetInt32("propietario_id"),
+
+                    Nombre = reader.GetString("PropietarioNombre"),
+
+                    DniCuit = reader.IsDBNull( reader.GetOrdinal("dni_cuit"))? "" : reader.GetString("dni_cuit")
+                },
+
+                Tipo = new TipoInmueble
+                {
+                    IdTipoInmueble =
+                        reader.GetInt32("tipo_inmueble_id"),
+
+                    Nombre =
+                        reader.GetString("TipoNombre")
+                }
+            });
+        }
+
+        return lista;
+    }
+
+    public int ContarMasReservados(int dias)
+    {
+        using var conexion = new MySqlConnection(connectionString);
+
+        string sql = @"
+        SELECT COUNT(DISTINCT i.id)
+
+        FROM inmueble i
+
+        INNER JOIN reserva r
+            ON i.id = r.id
+
+        WHERE i.activo = 1
+          AND r.fecha_desde >= DATE_SUB(
+              CURDATE(),
+              INTERVAL @dias DAY
+          );";
+
+        using var command = new MySqlCommand(sql, conexion);
+
+        command.Parameters.AddWithValue("@dias", dias);
 
         conexion.Open();
 

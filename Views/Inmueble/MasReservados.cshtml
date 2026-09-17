@@ -1,0 +1,158 @@
+@model IEnumerable<MVC.Models.Inmueble>
+
+@{
+    ViewData["Title"] = "Inmuebles más reservados";
+}
+
+<h2>Inmuebles más reservados</h2>
+
+<form asp-action="MasReservados" method="get" class="mb-4">
+
+    <div class="row align-items-end">
+
+        <div class="col-md-4">
+            <label for="dias" class="form-label">
+                Período
+            </label>
+
+            <select name="dias" id="dias" class="form-select">
+
+                <option value="30" selected="@(ViewBag.Dias == 30)">
+                    Últimos 30 días
+                </option>
+
+                <option value="60" selected="@(ViewBag.Dias == 60)">
+                    Últimos 60 días
+                </option>
+
+                <option value="90" selected="@(ViewBag.Dias == 90)">
+                    Últimos 90 días
+                </option>
+
+                <option value="180" selected="@(ViewBag.Dias == 180)">
+                    Últimos 180 días
+                </option>
+
+                <option value="365" selected="@(ViewBag.Dias == 365)">
+                    Últimos 365 días
+                </option>
+
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">
+                Consultar
+            </button>
+        </div>
+
+    </div>
+
+</form>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Precio por día</th>
+            <th>Reservas</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Direccion
+                </td>
+
+                <td>
+                    @(item.Titular != null
+                        ? item.Titular.Nombre
+                        : "Sin propietario")
+                </td>
+
+                <td>
+                    @(item.Tipo != null
+                        ? item.Tipo.Nombre
+                        : "Sin especificar")
+                </td>
+
+                <td>
+                    @item.Estado
+                </td>
+
+                <td>
+                    @item.PrecioPorDia.ToString("C")
+                </td>
+
+                <td>
+                    @item.CantidadReservas
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No se encontraron inmuebles con reservas
+        en el período seleccionado.
+    </div>
+}
+
+@if (ViewBag.TotalPaginas > 1)
+{
+    <nav>
+        <ul class="pagination">
+
+            @if (ViewBag.PaginaActual > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="MasReservados"
+                       asp-route-pagina="@(ViewBag.PaginaActual - 1)"
+                       asp-route-dias="@ViewBag.Dias">
+                        Anterior
+                    </a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+            {
+                <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
+
+                    <a class="page-link"
+                       asp-action="MasReservados"
+                       asp-route-pagina="@i"
+                       asp-route-dias="@ViewBag.Dias">
+                        @i
+                    </a>
+
+                </li>
+            }
+
+            @if (ViewBag.PaginaActual < ViewBag.TotalPaginas)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="MasReservados"
+                       asp-route-pagina="@(ViewBag.PaginaActual + 1)"
+                       asp-route-dias="@ViewBag.Dias">
+                        Siguiente
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </nav>
+}
