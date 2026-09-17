@@ -13,4 +13,6 @@ public interface IRepositorioPropietario
     IList<Propietario> GetAllIncludingInactive();
     bool ExisteDniCuit(string dniCuit, int idExcluir = 0);
     IList<Propietario> Buscar(string texto);
+     IList<Propietario> ObtenerPaginado(int pagina, int cantidadPorPagina);
+    int Contar();
 }

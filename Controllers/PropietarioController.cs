@@ -5,6 +5,7 @@ using MySqlConnector;
 using Microsoft.AspNetCore.Authorization;
 
 namespace MVC.Controllers;
+
 [Authorize]
 public class PropietarioController : Controller
 {
@@ -17,21 +18,45 @@ public class PropietarioController : Controller
         this.repoInmueble = repoInmueble;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(int page = 1)
     {
         try
         {
-            var lista = repositorio.GetAll();
+            const int cantidadPorPagina = 10;
+
+            if (page < 1)
+            {
+                page = 1;
+            }
+
+            int totalPropietarios = repositorio.Contar();
+
+            int totalPaginas = (int)Math.Ceiling(
+                totalPropietarios / (double)cantidadPorPagina
+            );
+
+            if (totalPaginas > 0 && page > totalPaginas)
+            {
+                page = totalPaginas;
+            }
+
+            var lista = repositorio.ObtenerPaginado(page, cantidadPorPagina);
+
+            ViewBag.PaginaActual = page;
+            ViewBag.TotalPaginas = totalPaginas;
+
             return View(lista);
         }
         catch (MySqlException ex)
         {
             TempData["Error"] = $"Error de conexión con la base de datos MySQL (Código: {ex.Number}).";
+
             return View(new List<Propietario>());
         }
         catch (Exception ex)
         {
             TempData["Error"] = $"Error al recuperar propietarios: {ex.Message}";
+
             return View(new List<Propietario>());
         }
     }

@@ -198,4 +198,61 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 
         return lista;
     }
+
+    public IList<Propietario> ObtenerPaginado(int pagina, int cantidadPorPagina)
+    {
+        var lista = new List<Propietario>();
+
+        using var connection = new MySqlConnection(connectionString);
+
+        var offset = (pagina - 1) * cantidadPorPagina;
+
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono, activo
+                   FROM propietario
+                   WHERE activo = 1
+                   ORDER BY id
+                   LIMIT @cantidadPorPagina OFFSET @offset";
+
+        using var command = new MySqlCommand(sql, connection);
+
+        command.Parameters.AddWithValue("@cantidadPorPagina", cantidadPorPagina);
+        command.Parameters.AddWithValue("@offset", offset);
+
+        connection.Open();
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            lista.Add(new Propietario
+            {
+                IdPropietario = reader.GetInt32("id"),
+
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre")) ? "" : reader.GetString("nombre"),
+
+                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit"),
+
+                Email = reader.IsDBNull(reader.GetOrdinal("email")) ? "" : reader.GetString("email"),
+
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
+
+                Activo = reader.GetBoolean("activo")
+            });
+        }
+
+        return lista;
+    }
+
+    public int Contar()
+    {
+        using var connection = new MySqlConnection(connectionString);
+
+        string sql = "SELECT COUNT(*) FROM propietario WHERE activo = 1";
+
+        using var command = new MySqlCommand(sql, connection);
+
+        connection.Open();
+
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
 }

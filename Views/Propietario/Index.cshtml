@@ -1,51 +1,106 @@
 @model List<MVC.Models.Propietario>
+
 <!DOCTYPE html>
+
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <title>Propietarios</title>
+
+<meta charset="utf-8" />
+
+<title>Propietarios</title>
+
 </head>
 
 <body>
-    <h2>Propietarios</h2>
-    <p><!--El asp.action es un metodo para apuntar a cierto método del controlador-->
-        <a asp-action="Crear">+ Nuevo propietario</a>
-    </p>
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>DNI/CUIT</th>
-                <th>Email</th>
-                <th>Telefono</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var propietario in Model)
-            {
-                <tr>
-                    <td>@propietario.IdPropietario</td>
-                    <td>@propietario.Nombre</td>
-                    <td>@propietario.DniCuit</td>
-                    <td>@propietario.Email</td>
-                    <td>@propietario.Telefono</td>
 
-                    <td>
-                        <a asp-action="Editar" asp-route-id="@propietario.IdPropietario">Editar</a> |
-                        <a asp-action="Eliminar" asp-route-id="@propietario.IdPropietario">Eliminar</a>
-                    </td>
-                </tr>
+<h2>Propietarios</h2>
+
+<p>
+    <!-- El asp-action es un método para apuntar a cierto método del controlador -->
+    <a asp-action="Crear">+ Nuevo propietario</a>
+</p>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<table border="1">
+
+    <thead>
+
+        <tr>
+
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>DNI/CUIT</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Acciones</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var propietario in Model)
+        {
+            <tr>
+
+                <td>@propietario.IdPropietario</td>
+                <td>@propietario.Nombre</td>
+                <td>@propietario.DniCuit</td>
+                <td>@propietario.Email</td>
+                <td>@propietario.Telefono</td>
+
+                <td>
+                    <a asp-action="Editar" asp-route-id="@propietario.IdPropietario"> Editar </a>
+                    |
+                    <a asp-action="Eliminar" asp-route-id="@propietario.IdPropietario"> Eliminar </a>
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+@if (ViewBag.TotalPaginas > 1)
+{
+    <div style="margin-top: 20px;">
+
+        @if (ViewBag.PaginaActual > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(ViewBag.PaginaActual - 1)"> &laquo; Anterior </a>
+        }
+
+        @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+        {
+            if (i == ViewBag.PaginaActual)
+            {
+                <strong style="margin: 0 5px;">
+                    @i
+                </strong>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <a asp-action="Index" asp-route-page="@i" style="margin: 0 5px;">  @i </a>
+            }
+        }
+
+        @if (ViewBag.PaginaActual < ViewBag.TotalPaginas)
+        {
+            <a asp-action="Index" asp-route-page="@(ViewBag.PaginaActual + 1)"> Siguiente &raquo; </a>
+        }
+
+    </div>
+}
+
 </body>
 
 </html>
