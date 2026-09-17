@@ -24,19 +24,27 @@ public class PagoController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int reservaId)
     {
-        var pagos = repositorioPago.ObtenerTodos();
+        var pagos = repositorioPago.ObtenerTodos()
+            .Where(p => p.ReservaId == reservaId)
+            .ToList();
+
+        ViewBag.ReservaId = reservaId;
 
         return View(pagos);
     }
 
-
     [HttpGet]
-    public IActionResult Crear()
+    public IActionResult Crear(int reservaId)
     {
-        ViewBag.Reservas = repositorioReserva.ObtenerTodos();
-        return View();
+        var pago = new Pago
+        {
+            ReservaId = reservaId,
+            fecha_pago = DateTime.Today
+        };
+
+        return View(pago);
     }
 
     [HttpPost]
@@ -46,6 +54,9 @@ public class PagoController : Controller
         if (pago.importe < 20000 || pago.importe > 999999)
             ModelState.AddModelError(nameof(pago.importe), "El importe debe estar entre $20.000 y $999.999.");
 
+        if (pago.fecha_pago < DateTime.Today)
+            ModelState.AddModelError(nameof(pago.fecha_pago), "La fecha de pago no puede ser anterior a hoy.");
+
         if (pago.ReservaId <= 0)
             ModelState.AddModelError(nameof(pago.ReservaId), "Debe seleccionar una reserva.");
 
@@ -53,10 +64,7 @@ public class PagoController : Controller
             ModelState.AddModelError(nameof(pago.concepto), "Debe seleccionar un concepto.");
 
         if (!ModelState.IsValid)
-        {
-            ViewBag.Reservas = repositorioReserva.ObtenerTodos();
             return View(pago);
-        }
 
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -69,7 +77,7 @@ public class PagoController : Controller
 
         repositorioPago.Crear(pago);
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { reservaId = pago.ReservaId });
     }
 
     [HttpPost]
@@ -92,6 +100,6 @@ public class PagoController : Controller
 
         repositorioPago.Modificar(pago);
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { reservaId = pago.ReservaId });
     }
 }

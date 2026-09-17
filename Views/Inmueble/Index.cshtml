@@ -112,7 +112,7 @@
                     @if (item.Estado != "Suspendido")
                     {
                         <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble">Reservar</a>
-                        <text> | </text>
+                        
                     }
                     <form asp-action="CambiarEstado" asp-route-id="@item.IdInmueble" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-sm btn-danger">
