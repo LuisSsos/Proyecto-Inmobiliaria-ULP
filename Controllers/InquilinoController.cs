@@ -1,27 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Repositories;
-using MySqlConnector;
 using Microsoft.AspNetCore.Authorization;
 
 
 namespace MVC.Controllers;
+
 [Authorize]
 public class InquilinoController : Controller
 {
     private readonly IRepositorioInquilino repositorio;
     private readonly IRepositorioReserva repoReserva;
     public InquilinoController(IRepositorioInquilino repositorio, IRepositorioReserva repoReserva)
-{
-    this.repositorio = repositorio;
-    this.repoReserva = repoReserva;
-}
+    {
+        this.repositorio = repositorio;
+        this.repoReserva = repoReserva;
+    }
 
-    public IActionResult Index()
+    public IActionResult Index(int page = 1)
     {
         try
         {
-            var lista = repositorio.ObtenerTodos();
+            const int cantidadPorPagina = 10;
+
+            if (page < 1)
+            {
+                page = 1;
+            }
+
+            int totalInquilinos = repositorio.Contar();
+
+            int totalPaginas = (int)Math.Ceiling(totalInquilinos / (double)cantidadPorPagina);
+
+            if (totalPaginas > 0 && page > totalPaginas)
+            {
+                page = totalPaginas;
+            }
+
+            var lista = repositorio.ObtenerPaginado(page, cantidadPorPagina);
+
+            ViewBag.PaginaActual = page;
+            ViewBag.TotalPaginas = totalPaginas;
+
             return View(lista);
         }
         catch (Exception)
@@ -129,57 +149,57 @@ public class InquilinoController : Controller
         }
     }
 
-[HttpGet]
-[Authorize(Roles = "Administrador")]
-public IActionResult Eliminar(int id)
-{
-    try
+    [HttpGet]
+    [Authorize(Roles = "Administrador")]
+    public IActionResult Eliminar(int id)
     {
-        var inquilino = repositorio.ObtenerPorId(id);
-
-        if (inquilino == null)
+        try
         {
-            return NotFound();
+            var inquilino = repositorio.ObtenerPorId(id);
+
+            if (inquilino == null)
+            {
+                return NotFound();
+            }
+
+            bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
+            if (tieneReservas)
+            {
+                TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(inquilino);
         }
-
-        bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
-        if (tieneReservas)
+        catch (Exception)
         {
-            TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
+            TempData["Error"] = "Ocurrió un error al obtener el inquilino.";
             return RedirectToAction(nameof(Index));
         }
-
-        return View(inquilino);
     }
-    catch (Exception)
-    {
-        TempData["Error"] = "Ocurrió un error al obtener el inquilino.";
-        return RedirectToAction(nameof(Index));
-    }
-}
 
-[HttpPost, ActionName("Eliminar")]
-[Authorize(Roles = "Administrador")]
-public IActionResult EliminarConfirmado(int id)
-{
-    try
+    [HttpPost, ActionName("Eliminar")]
+    [Authorize(Roles = "Administrador")]
+    public IActionResult EliminarConfirmado(int id)
     {
-        bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
-        if (tieneReservas)
+        try
         {
-            TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
+            bool tieneReservas = repoReserva.ObtenerTodos().Any(r => r.inquilino_id == id);
+            if (tieneReservas)
+            {
+                TempData["Error"] = "No se puede dar de baja el inquilino porque tiene reservas registradas.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            repositorio.Eliminar(id);
+            TempData["Success"] = "El inquilino fue dado de baja correctamente.";
+
             return RedirectToAction(nameof(Index));
         }
-
-        repositorio.Eliminar(id);
-        TempData["Success"] = "El inquilino fue dado de baja correctamente.";
-
-        return RedirectToAction(nameof(Index));
+        catch (Exception)
+        {
+            TempData["Error"] = "Ocurrió un error inesperado al eliminar el inquilino.";
+            return RedirectToAction(nameof(Index));
+        }
     }
-    catch (Exception)
-    {
-        TempData["Error"] = "Ocurrió un error inesperado al eliminar el inquilino.";
-        return RedirectToAction(nameof(Index));
-    }
-}
 }

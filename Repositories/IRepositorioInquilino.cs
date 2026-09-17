@@ -10,6 +10,9 @@ public interface IRepositorioInquilino
     void EliminarFisico(int id);
     void Modificar(Inquilino i);
     List<Inquilino> ObtenerTodos();
+    List<Inquilino> ObtenerPaginado(int pagina, int cantidadPorPagina);
+    int Contar();
+
     Inquilino? ObtenerPorId(int id);
     bool ExisteDni(string dni, int idExcluir = 0);
 

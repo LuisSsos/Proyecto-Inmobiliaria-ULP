@@ -175,4 +175,68 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 
         return lista;
     }
+
+    // listar inquilinos de una página determinada
+    public List<Inquilino> ObtenerPaginado(int pagina, int cantidadPorPagina)
+    {
+        var lista = new List<Inquilino>();
+
+        using var connection = new MySqlConnection(connectionString);
+
+        var offset = (pagina - 1) * cantidadPorPagina;
+
+        var query = @"SELECT id, nombre_completo, dni, email, telefono, activo
+                  FROM inquilino
+                  WHERE activo = 1
+                  ORDER BY id
+                  LIMIT @cantidadPorPagina OFFSET @offset";
+
+        using var command = new MySqlCommand(query, connection);
+
+        command.Parameters.AddWithValue("@cantidadPorPagina", cantidadPorPagina);
+        command.Parameters.AddWithValue("@offset", offset);
+
+        connection.Open();
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            var inquilino = new Inquilino
+            {
+                id_inquilino = reader.GetInt32("id"),
+                dni = reader.IsDBNull(reader.GetOrdinal("dni"))
+                    ? ""
+                    : reader.GetString("dni"),
+                nombre_completo = reader.IsDBNull(reader.GetOrdinal("nombre_completo"))
+                    ? ""
+                    : reader.GetString("nombre_completo"),
+                email = reader.IsDBNull(reader.GetOrdinal("email"))
+                    ? ""
+                    : reader.GetString("email"),
+                telefono = reader.IsDBNull(reader.GetOrdinal("telefono"))
+                    ? ""
+                    : reader.GetString("telefono"),
+                activo = reader.GetBoolean("activo")
+            };
+
+            lista.Add(inquilino);
+        }
+
+        return lista;
+    }
+
+    // contar inquilinos activos
+    public int Contar()
+    {
+        using var connection = new MySqlConnection(connectionString);
+
+        var query = "SELECT COUNT(*) FROM inquilino WHERE activo = 1";
+
+        using var command = new MySqlCommand(query, connection);
+
+        connection.Open();
+
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
 }
