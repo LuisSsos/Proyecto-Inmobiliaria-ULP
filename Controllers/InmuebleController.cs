@@ -28,30 +28,57 @@ public class InmuebleController : Controller
 
     // LISTAR
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1, string? estado = null)
     {
         try
         {
-            var lista = repoInmueble.GetAll();
+            int cantidadPorPagina = 10;
 
-            // busca si tiene una foto para mostrar en el listado
+            if (pagina < 1)
+            {
+                pagina = 1;
+            }
+
+            var lista = repoInmueble.ObtenerPaginado(
+                pagina,
+                cantidadPorPagina,
+                estado);
+
+            int totalInmuebles = repoInmueble.ContarInmuebles(estado);
+
+            int totalPaginas = (int)Math.Ceiling(
+                totalInmuebles / (double)cantidadPorPagina);
+
             var imagenesPorInmueble = new Dictionary<int, ImagenInmueble>();
+
             foreach (var inmueble in lista)
             {
-                var imagenes = repoImagen.ObtenerPorInmueble(inmueble.IdInmueble);
-                var portada = imagenes.FirstOrDefault(img => img.esPortada) ?? imagenes.FirstOrDefault();
+                var imagenes = repoImagen.ObtenerPorInmueble(
+                    inmueble.IdInmueble);
+
+                var portada =
+                    imagenes.FirstOrDefault(img => img.esPortada)
+                    ?? imagenes.FirstOrDefault();
+
                 if (portada != null)
                 {
                     imagenesPorInmueble[inmueble.IdInmueble] = portada;
                 }
             }
+
             ViewBag.ImagenesPorInmueble = imagenesPorInmueble;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.CantidadPorPagina = cantidadPorPagina;
+            ViewBag.EstadoActual = estado;
 
             return View(lista);
         }
         catch (Exception)
         {
-            return StatusCode(500, "Ocurrió un error al obtener los inmuebles.");
+            return StatusCode(
+                500,
+                "Ocurrió un error al obtener los inmuebles.");
         }
     }
 

@@ -13,5 +13,6 @@ public interface IRepositorioInmueble
     IList<Inmueble> GetAllIncludingInactive();
 
     int CambiarEstado(int id, string estado);
-
+    IList<Inmueble> ObtenerPaginado(int pagina, int cantidadPorPagina, string? estado);
+    int ContarInmuebles(string? estado);
 }

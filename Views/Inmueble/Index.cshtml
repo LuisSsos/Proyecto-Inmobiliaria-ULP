@@ -17,6 +17,42 @@
     </div>
 }
 
+<form asp-action="Index" method="get" class="mb-3">
+
+    <div class="row align-items-end">
+
+        <div class="col-md-4">
+            <label for="estado" class="form-label">
+                Filtrar por estado
+            </label>
+
+            <select name="estado" id="estado" class="form-select">
+
+                <option value="">
+                    Todos
+                </option>
+
+                <option value="Disponible" selected="@(ViewBag.EstadoActual == "Disponible")">
+                    Disponible
+                </option>
+
+                <option value="Suspendido" selected="@(ViewBag.EstadoActual == "Suspendido")">
+                    Suspendido
+                </option>
+
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">
+                Filtrar
+            </button>
+        </div>
+
+    </div>
+
+</form>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -74,3 +110,43 @@
         }
     </tbody>
 </table>
+
+@if (ViewBag.TotalPaginas > 1)
+{
+    <nav>
+        <ul class="pagination">
+
+            @if (ViewBag.PaginaActual > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pagina="@(ViewBag.PaginaActual - 1)"
+                       asp-route-estado="@ViewBag.EstadoActual">
+                        Anterior
+                    </a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+            {
+                <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
+
+                    <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-estado="@ViewBag.EstadoActual">
+                        @i
+                    </a>
+
+                </li>
+            }
+
+            @if (ViewBag.PaginaActual < ViewBag.TotalPaginas)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-pagina="@(ViewBag.PaginaActual + 1)"
+                       asp-route-estado="@ViewBag.EstadoActual">
+                        Siguiente
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </nav>
+}

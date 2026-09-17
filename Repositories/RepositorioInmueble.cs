@@ -127,9 +127,9 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
     }
 
     public Inmueble? GetById(int id)
-{
-    using var conexion = new MySqlConnection(connectionString);
-    string sql = @"SELECT i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, 
+    {
+        using var conexion = new MySqlConnection(connectionString);
+        string sql = @"SELECT i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, 
                     i.cupo, i.latitud, i.longitud, i.precio_por_dia, i.porcentaje_sena, i.estado,
                     p.nombre AS PropietarioNombre, p.dni_cuit, i.activo,
                     t.nombre AS TipoNombre
@@ -137,42 +137,42 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                     INNER JOIN propietario p ON i.propietario_id = p.id
                     INNER JOIN tipo_inmueble t ON i.tipo_inmueble_id = t.id
                     WHERE i.id = @id;";
-    using var command = new MySqlCommand(sql, conexion);
-    command.Parameters.AddWithValue("@id", id);
-    conexion.Open();
-    using var reader = command.ExecuteReader();
+        using var command = new MySqlCommand(sql, conexion);
+        command.Parameters.AddWithValue("@id", id);
+        conexion.Open();
+        using var reader = command.ExecuteReader();
 
-    if (reader.Read())
-    {
-        return new Inmueble
+        if (reader.Read())
         {
-            IdInmueble = reader.GetInt32("id"),
-            PropietarioId = reader.GetInt32("propietario_id"),
-            TipoInmuebleId = reader.GetInt32("tipo_inmueble_id"),
-            Direccion = reader.GetString("direccion"),
-            Cupo = reader.GetInt32("cupo"),
-            Latitud = reader.GetDecimal("latitud"),
-            Longitud = reader.GetDecimal("longitud"),
-            PrecioPorDia = reader.GetDecimal("precio_por_dia"),
-            PorcentajeSeña = reader.GetDecimal("porcentaje_sena"),
-            Estado = reader.GetString("estado"),
-            Activo = reader.GetBoolean("activo"),
-            Titular = new Propietario
+            return new Inmueble
             {
-                IdPropietario = reader.GetInt32("propietario_id"),
-                Nombre = reader.GetString("PropietarioNombre"),
-                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit")
-            },
-            Tipo = new TipoInmueble
-            {
-                IdTipoInmueble = reader.GetInt32("tipo_inmueble_id"),
-                Nombre = reader.GetString("TipoNombre")
-            }
-        };
-    }
+                IdInmueble = reader.GetInt32("id"),
+                PropietarioId = reader.GetInt32("propietario_id"),
+                TipoInmuebleId = reader.GetInt32("tipo_inmueble_id"),
+                Direccion = reader.GetString("direccion"),
+                Cupo = reader.GetInt32("cupo"),
+                Latitud = reader.GetDecimal("latitud"),
+                Longitud = reader.GetDecimal("longitud"),
+                PrecioPorDia = reader.GetDecimal("precio_por_dia"),
+                PorcentajeSeña = reader.GetDecimal("porcentaje_sena"),
+                Estado = reader.GetString("estado"),
+                Activo = reader.GetBoolean("activo"),
+                Titular = new Propietario
+                {
+                    IdPropietario = reader.GetInt32("propietario_id"),
+                    Nombre = reader.GetString("PropietarioNombre"),
+                    DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit")) ? "" : reader.GetString("dni_cuit")
+                },
+                Tipo = new TipoInmueble
+                {
+                    IdTipoInmueble = reader.GetInt32("tipo_inmueble_id"),
+                    Nombre = reader.GetString("TipoNombre")
+                }
+            };
+        }
 
-    return null;
-}
+        return null;
+    }
 
     public IList<Inmueble> GetAllIncludingInactive()
     {
@@ -227,13 +227,127 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
     }
 
     public int CambiarEstado(int id, string estado)
-{
-    using var conexion = new MySqlConnection(connectionString);
-    string sql = @"UPDATE inmueble SET estado = @estado WHERE id = @id;";
-    using var command = new MySqlCommand(sql, conexion);
-    command.Parameters.AddWithValue("@estado", estado);
-    command.Parameters.AddWithValue("@id", id);
-    conexion.Open();
-    return command.ExecuteNonQuery();
-}
+    {
+        using var conexion = new MySqlConnection(connectionString);
+        string sql = @"UPDATE inmueble SET estado = @estado WHERE id = @id;";
+        using var command = new MySqlCommand(sql, conexion);
+        command.Parameters.AddWithValue("@estado", estado);
+        command.Parameters.AddWithValue("@id", id);
+        conexion.Open();
+        return command.ExecuteNonQuery();
+    }
+    public IList<Inmueble> ObtenerPaginado(
+        int pagina,
+        int cantidadPorPagina,
+        string? estado)
+    {
+        var lista = new List<Inmueble>();
+
+        int offset = (pagina - 1) * cantidadPorPagina;
+
+        using var conexion = new MySqlConnection(connectionString);
+
+        string sql = @"
+        SELECT 
+            i.id, i.propietario_id, i.tipo_inmueble_id, i.direccion, i.cupo, i.latitud, i.longitud,
+            i.precio_por_dia, i.porcentaje_sena, i.estado, i.activo,
+
+            p.nombre AS PropietarioNombre,
+            p.dni_cuit,
+
+            t.nombre AS TipoNombre
+
+        FROM inmueble i
+
+        INNER JOIN propietario p 
+            ON i.propietario_id = p.id
+
+        INNER JOIN tipo_inmueble t 
+            ON i.tipo_inmueble_id = t.id
+
+        WHERE i.activo = 1
+    ";
+
+        if (!string.IsNullOrEmpty(estado))
+        {
+            sql += " AND i.estado = @estado ";
+        }
+
+        sql += " ORDER BY i.id LIMIT @cantidadPorPagina OFFSET @offset; ";
+
+        using var command = new MySqlCommand(sql, conexion);
+
+        if (!string.IsNullOrEmpty(estado))
+        {
+            command.Parameters.AddWithValue("@estado", estado);
+        }
+
+        command.Parameters.AddWithValue("@cantidadPorPagina", cantidadPorPagina);
+        command.Parameters.AddWithValue("@offset", offset);
+
+        conexion.Open();
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            lista.Add(new Inmueble
+            {
+                IdInmueble = reader.GetInt32("id"),
+                PropietarioId = reader.GetInt32("propietario_id"),
+                TipoInmuebleId = reader.GetInt32("tipo_inmueble_id"),
+                Direccion = reader.GetString("direccion"),
+                Cupo = reader.GetInt32("cupo"),
+                Latitud = reader.GetDecimal("latitud"),
+                Longitud = reader.GetDecimal("longitud"),
+                PrecioPorDia = reader.GetDecimal("precio_por_dia"),
+                PorcentajeSeña = reader.GetDecimal("porcentaje_sena"),
+                Estado = reader.GetString("estado"),
+                Activo = reader.GetBoolean("activo"),
+
+                Titular = new Propietario
+                {
+                    IdPropietario = reader.GetInt32("propietario_id"),
+                    Nombre = reader.GetString("PropietarioNombre"),
+                    DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit"))
+                        ? ""
+                        : reader.GetString("dni_cuit")
+                },
+
+                Tipo = new TipoInmueble
+                {
+                    IdTipoInmueble = reader.GetInt32("tipo_inmueble_id"),
+                    Nombre = reader.GetString("TipoNombre")
+                }
+            });
+        }
+
+        return lista;
+    }
+    public int ContarInmuebles(string? estado)
+    {
+        using var conexion = new MySqlConnection(connectionString);
+
+        string sql = @"
+        SELECT COUNT(*)
+        FROM inmueble i
+        WHERE i.activo = 1
+    ";
+
+        if (!string.IsNullOrEmpty(estado))
+        {
+            sql += " AND i.estado = @estado ";
+        }
+
+        using var command = new MySqlCommand(sql, conexion);
+
+        if (!string.IsNullOrEmpty(estado))
+        {
+            command.Parameters.AddWithValue("@estado", estado);
+        }
+
+        conexion.Open();
+
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
 }
