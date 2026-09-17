@@ -302,4 +302,20 @@ public class ReservaController : Controller
 
         return View("Crear", nuevaReserva);
     }
+
+    public IActionResult Vigentes()
+    {
+        var reservas = repositorioReserva.ObtenerVigentes();
+        var inquilinos = repositorioInquilino.ObtenerTodos();
+        var inmuebles = repositorioInmueble.GetAll();
+
+        var modelo = reservas.Select(r => new ReservaIndexViewModel
+        {
+            Reserva = r,
+            Inquilino = inquilinos.FirstOrDefault(i => i.id_inquilino == r.inquilino_id)!,
+            Inmueble = inmuebles.FirstOrDefault(i => i.IdInmueble == r.inmueble_id)!
+        }).ToList();
+
+        return View(modelo);
+    }
 }

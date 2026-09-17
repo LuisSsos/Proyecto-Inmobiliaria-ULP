@@ -77,8 +77,8 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
                 estado = reader.GetString("estado"),
                 Activo = reader.GetBoolean("activo"),
 
-                usuario_creador_id =reader.IsDBNull(reader.GetOrdinal("usuario_creador_id"))? null: reader.GetInt32("usuario_creador_id"),
-                usuario_terminador_id =reader.IsDBNull(reader.GetOrdinal("usuario_terminador_id"))? null: reader.GetInt32("usuario_terminador_id")
+                usuario_creador_id = reader.IsDBNull(reader.GetOrdinal("usuario_creador_id")) ? null : reader.GetInt32("usuario_creador_id"),
+                usuario_terminador_id = reader.IsDBNull(reader.GetOrdinal("usuario_terminador_id")) ? null : reader.GetInt32("usuario_terminador_id")
             };
         }
 
@@ -214,5 +214,44 @@ public class RepositorioReserva : RepositorioBase, IRepositorioReserva
         conexion.Open();
         int count = Convert.ToInt32(command.ExecuteScalar());
         return count > 0;
+    }
+
+    public List<Reserva> ObtenerVigentes()
+    {
+        var lista = new List<Reserva>();
+
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        var query = @"SELECT id, inquilino_id, inmueble_id, fecha_desde, fecha_hasta, fecha_fin_real, monto_por_dia, multa, estado, activo, usuario_creador_id, usuario_terminador_id 
+                  FROM reserva 
+                  WHERE activo = 1 
+                  AND estado != 'Cancelada'
+                  AND fecha_desde <= CURDATE() 
+                  AND fecha_hasta >= CURDATE()";
+
+        using var command = new MySqlCommand(query, connection);
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            lista.Add(new Reserva
+            {
+                id_reserva = reader.GetInt32("id"),
+                inquilino_id = reader.GetInt32("inquilino_id"),
+                inmueble_id = reader.GetInt32("inmueble_id"),
+                fecha_desde = reader.GetDateTime("fecha_desde"),
+                fecha_hasta = reader.GetDateTime("fecha_hasta"),
+                fecha_fin_real = reader.IsDBNull(reader.GetOrdinal("fecha_fin_real")) ? null : reader.GetDateTime("fecha_fin_real"),
+                monto_por_dia = reader.GetDecimal("monto_por_dia"),
+                multa = reader.GetDecimal("multa"),
+                estado = reader.GetString("estado"),
+                Activo = reader.GetBoolean("activo"),
+                usuario_creador_id = reader.IsDBNull(reader.GetOrdinal("usuario_creador_id")) ? null : reader.GetInt32("usuario_creador_id"),
+                usuario_terminador_id = reader.IsDBNull(reader.GetOrdinal("usuario_terminador_id")) ? null : reader.GetInt32("usuario_terminador_id")
+            });
+        }
+
+        return lista;
     }
 }

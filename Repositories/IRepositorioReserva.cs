@@ -11,8 +11,9 @@ public interface IRepositorioReserva
     void Modificar(Reserva reserva);
     List<Reserva> ObtenerTodos();
     IList<Reserva> GetAllIncludingInactive();
-
+    List<Reserva> ObtenerVigentes();
     Reserva? ObtenerPorId(int id);
     bool ExisteSolapamiento(int inmuebleId, DateTime fechaDesde, DateTime fechaHasta, int idExcluir = 0);
     bool TieneReservasAsociadas(int inmuebleId);
+    
 }
