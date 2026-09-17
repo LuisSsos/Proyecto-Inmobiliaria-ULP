@@ -146,4 +146,56 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
         }
         return lista;
     }
+
+    public IList<Propietario> Buscar(string texto)
+    {
+        var lista = new List<Propietario>();
+
+        using var connection = new MySqlConnection(connectionString);
+
+        string sql = @"SELECT id, nombre, dni_cuit, email, telefono, activo
+        FROM propietario
+        WHERE activo = 1
+        AND (nombre LIKE @texto OR dni_cuit LIKE @texto)
+        ORDER BY nombre
+        LIMIT 10; ";
+
+        using var command = new MySqlCommand(sql, connection);
+
+        command.Parameters.AddWithValue(
+            "@texto",
+            "%" + texto + "%");
+
+        connection.Open();
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            lista.Add(new Propietario
+            {
+                IdPropietario = reader.GetInt32("id"),
+
+                Nombre = reader.IsDBNull(reader.GetOrdinal("nombre"))
+                    ? ""
+                    : reader.GetString("nombre"),
+
+                DniCuit = reader.IsDBNull(reader.GetOrdinal("dni_cuit"))
+                    ? ""
+                    : reader.GetString("dni_cuit"),
+
+                Email = reader.IsDBNull(reader.GetOrdinal("email"))
+                    ? ""
+                    : reader.GetString("email"),
+
+                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono"))
+                    ? ""
+                    : reader.GetString("telefono"),
+
+                Activo = reader.GetBoolean("activo")
+            });
+        }
+
+        return lista;
+    }
 }

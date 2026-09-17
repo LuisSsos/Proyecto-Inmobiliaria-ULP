@@ -51,6 +51,20 @@
 
     </div>
 
+    <div class="mb-3">
+        <label for="buscarPropietario" class="form-label">
+            Propietario
+        </label>
+
+        <input type="text" id="buscarPropietario" class="form-control" placeholder="Escriba al menos 2 caracteres..."
+               autocomplete="off" />
+
+        <div id="resultadosPropietarios" class="list-group mt-1">
+        </div>
+
+        <input type="hidden" id="propietarioId" name="propietarioId" />
+    </div>
+
 </form>
 
 <table class="table table-striped">
@@ -150,3 +164,73 @@
         </ul>
     </nav>
 }
+
+<script>
+        const inputPropietario =
+            document.getElementById("buscarPropietario");
+
+        const resultados =
+            document.getElementById("resultadosPropietarios");
+
+        const propietarioId =
+            document.getElementById("propietarioId");
+
+        inputPropietario.addEventListener("input", async function () {
+
+            const texto = this.value.trim();
+
+            resultados.innerHTML = "";
+            propietarioId.value = "";
+
+            if (texto.length < 2) {
+                return;
+            }
+
+            try {
+
+                const respuesta = await fetch(
+                    `/Inmueble/BuscarPropietarios?texto=${encodeURIComponent(texto)}`
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("Error al buscar propietarios.");
+                }
+
+                const propietarios = await respuesta.json();
+
+                console.log("Propietarios encontrados:", propietarios);
+
+                propietarios.forEach(propietario => {
+
+                    const opcion = document.createElement("button");
+
+                    opcion.type = "button";
+                    opcion.className =
+                        "list-group-item list-group-item-action";
+
+                    opcion.innerHTML = `
+                        <strong>${propietario.nombre}</strong>
+                        <br>
+                        <small>DNI/CUIT: ${propietario.dniCuit}</small>
+                    `;
+
+                    opcion.addEventListener("click", function () {
+
+                        inputPropietario.value =
+                            propietario.nombre;
+
+                        propietarioId.value =
+                            propietario.id;
+
+                        resultados.innerHTML = "";
+                    });
+
+                    resultados.appendChild(opcion);
+                });
+
+            } catch (error) {
+
+                console.error("Error:", error);
+            }
+        });
+    </script>

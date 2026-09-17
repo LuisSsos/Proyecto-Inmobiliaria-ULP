@@ -28,59 +28,83 @@ public class InmuebleController : Controller
 
     // LISTAR
     [HttpGet]
-    public IActionResult Index(int pagina = 1, string? estado = null)
+[HttpGet]
+public IActionResult Index(
+    int pagina = 1,
+    string? estado = null,
+    int? propietarioId = null)
+{
+    try
     {
-        try
+        int cantidadPorPagina = 10;
+
+        if (pagina < 1)
         {
-            int cantidadPorPagina = 10;
+            pagina = 1;
+        }
 
-            if (pagina < 1)
-            {
-                pagina = 1;
-            }
+        var lista = repoInmueble.ObtenerPaginado(
+            pagina,
+            cantidadPorPagina,
+            estado,
+            propietarioId);
 
-            var lista = repoInmueble.ObtenerPaginado(
-                pagina,
-                cantidadPorPagina,
-                estado);
+        int totalInmuebles =
+            repoInmueble.ContarInmuebles(
+                estado,
+                propietarioId);
 
-            int totalInmuebles = repoInmueble.ContarInmuebles(estado);
+        int totalPaginas = (int)Math.Ceiling(
+            totalInmuebles / (double)cantidadPorPagina);
 
-            int totalPaginas = (int)Math.Ceiling(
-                totalInmuebles / (double)cantidadPorPagina);
+        var imagenesPorInmueble =
+            new Dictionary<int, ImagenInmueble>();
 
-            var imagenesPorInmueble = new Dictionary<int, ImagenInmueble>();
-
-            foreach (var inmueble in lista)
-            {
-                var imagenes = repoImagen.ObtenerPorInmueble(
+        foreach (var inmueble in lista)
+        {
+            var imagenes =
+                repoImagen.ObtenerPorInmueble(
                     inmueble.IdInmueble);
 
-                var portada =
-                    imagenes.FirstOrDefault(img => img.esPortada)
-                    ?? imagenes.FirstOrDefault();
+            var portada =
+                imagenes.FirstOrDefault(
+                    img => img.esPortada)
+                ?? imagenes.FirstOrDefault();
 
-                if (portada != null)
-                {
-                    imagenesPorInmueble[inmueble.IdInmueble] = portada;
-                }
+            if (portada != null)
+            {
+                imagenesPorInmueble[
+                    inmueble.IdInmueble] = portada;
             }
-
-            ViewBag.ImagenesPorInmueble = imagenesPorInmueble;
-            ViewBag.PaginaActual = pagina;
-            ViewBag.TotalPaginas = totalPaginas;
-            ViewBag.CantidadPorPagina = cantidadPorPagina;
-            ViewBag.EstadoActual = estado;
-
-            return View(lista);
         }
-        catch (Exception)
-        {
-            return StatusCode(
-                500,
-                "Ocurrió un error al obtener los inmuebles.");
-        }
+
+        ViewBag.ImagenesPorInmueble =
+            imagenesPorInmueble;
+
+        ViewBag.PaginaActual =
+            pagina;
+
+        ViewBag.TotalPaginas =
+            totalPaginas;
+
+        ViewBag.CantidadPorPagina =
+            cantidadPorPagina;
+
+        ViewBag.EstadoActual =
+            estado;
+
+        ViewBag.PropietarioActual =
+            propietarioId;
+
+        return View(lista);
     }
+    catch (Exception)
+    {
+        return StatusCode(
+            500,
+            "Ocurrió un error al obtener los inmuebles.");
+    }
+}
 
     // CREAR - GET
     [HttpGet]
@@ -266,6 +290,33 @@ public class InmuebleController : Controller
         catch (Exception)
         {
             throw;
+        }
+    }
+
+    [HttpGet]
+    public IActionResult BuscarPropietarios(string texto)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(texto) || texto.Length < 2)
+            {
+                return Json(new List<object>());
+            }
+
+            var propietarios = repoProp.Buscar(texto);
+
+            var resultado = propietarios.Select(p => new
+            {
+                id = p.IdPropietario,
+                nombre = p.Nombre,
+                dniCuit = p.DniCuit
+            });
+
+            return Json(resultado);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Ocurrió un error al buscar propietarios.");
         }
     }
 }

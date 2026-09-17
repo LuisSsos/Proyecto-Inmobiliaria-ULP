@@ -239,7 +239,8 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
     public IList<Inmueble> ObtenerPaginado(
         int pagina,
         int cantidadPorPagina,
-        string? estado)
+        string? estado,
+        int? propietarioId)
     {
         var lista = new List<Inmueble>();
 
@@ -273,6 +274,11 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
             sql += " AND i.estado = @estado ";
         }
 
+        if (propietarioId.HasValue)
+        {
+            sql += " AND i.propietario_id = @propietarioId ";
+        }
+
         sql += " ORDER BY i.id LIMIT @cantidadPorPagina OFFSET @offset; ";
 
         using var command = new MySqlCommand(sql, conexion);
@@ -280,6 +286,14 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         if (!string.IsNullOrEmpty(estado))
         {
             command.Parameters.AddWithValue("@estado", estado);
+        }
+
+        if (propietarioId.HasValue)
+        {
+            command.Parameters.AddWithValue(
+                "@propietarioId",
+                propietarioId.Value
+            );
         }
 
         command.Parameters.AddWithValue("@cantidadPorPagina", cantidadPorPagina);
@@ -324,7 +338,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
         return lista;
     }
-    public int ContarInmuebles(string? estado)
+    public int ContarInmuebles( string? estado, int? propietarioId)
     {
         using var conexion = new MySqlConnection(connectionString);
 
@@ -334,16 +348,29 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         WHERE i.activo = 1
     ";
 
-        if (!string.IsNullOrEmpty(estado))
+        if (!string.IsNullOrWhiteSpace(estado))
         {
             sql += " AND i.estado = @estado ";
         }
 
+        if (propietarioId.HasValue)
+        {
+            sql += " AND i.propietario_id = @propietarioId ";
+        }
+
         using var command = new MySqlCommand(sql, conexion);
 
-        if (!string.IsNullOrEmpty(estado))
+        if (!string.IsNullOrWhiteSpace(estado))
         {
             command.Parameters.AddWithValue("@estado", estado);
+        }
+
+        if (propietarioId.HasValue)
+        {
+            command.Parameters.AddWithValue(
+                "@propietarioId",
+                propietarioId.Value
+            );
         }
 
         conexion.Open();

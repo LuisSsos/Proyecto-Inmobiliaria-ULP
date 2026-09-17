@@ -12,4 +12,5 @@ public interface IRepositorioPropietario
     IList<Propietario> GetAll();
     IList<Propietario> GetAllIncludingInactive();
     bool ExisteDniCuit(string dniCuit, int idExcluir = 0);
+    IList<Propietario> Buscar(string texto);
 }
