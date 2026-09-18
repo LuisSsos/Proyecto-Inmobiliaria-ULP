@@ -10,8 +10,8 @@
     <a asp-action="Crear" class="btn btn-primary">Nuevo inmueble</a>
     <a asp-action="MasReservados" class="btn btn-primary">Inmuebles más reservados</a>
     <a asp-action="DisponiblesEntreFechas" class="btn btn-primary">
-    Disponibles entre fechas
-</a>
+        Disponibles entre fechas
+    </a>
 </p>
 
 @if (TempData["Error"] != null)
@@ -113,10 +113,11 @@
                 <td>
                     <a asp-action="Editar" asp-route-id="@item.IdInmueble">Editar</a> |
                     <a asp-action="Eliminar" asp-route-id="@item.IdInmueble">Eliminar</a> |
+                    <a asp-controller="ImagenInmueble" asp-action="Index" asp-route-inmuebleId="@item.IdInmueble">Ver imágenes</a>
                     @if (item.Estado != "Suspendido")
                     {
                         <a asp-controller="Reserva" asp-action="Crear" asp-route-inmuebleId="@item.IdInmueble">Reservar</a>
-                        
+
                     }
                     <form asp-action="CambiarEstado" asp-route-id="@item.IdInmueble" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-sm btn-danger">
@@ -170,71 +171,71 @@
 }
 
 <script>
-        const inputPropietario =
-            document.getElementById("buscarPropietario");
+    const inputPropietario =
+        document.getElementById("buscarPropietario");
 
-        const resultados =
-            document.getElementById("resultadosPropietarios");
+    const resultados =
+        document.getElementById("resultadosPropietarios");
 
-        const propietarioId =
-            document.getElementById("propietarioId");
+    const propietarioId =
+        document.getElementById("propietarioId");
 
-        inputPropietario.addEventListener("input", async function () {
+    inputPropietario.addEventListener("input", async function () {
 
-            const texto = this.value.trim();
+        const texto = this.value.trim();
 
-            resultados.innerHTML = "";
-            propietarioId.value = "";
+        resultados.innerHTML = "";
+        propietarioId.value = "";
 
-            if (texto.length < 2) {
-                return;
+        if (texto.length < 2) {
+            return;
+        }
+
+        try {
+
+            const respuesta = await fetch(
+                `/Inmueble/BuscarPropietarios?texto=${encodeURIComponent(texto)}`
+            );
+
+            if (!respuesta.ok) {
+                throw new Error("Error al buscar propietarios.");
             }
 
-            try {
+            const propietarios = await respuesta.json();
 
-                const respuesta = await fetch(
-                    `/Inmueble/BuscarPropietarios?texto=${encodeURIComponent(texto)}`
-                );
+            console.log("Propietarios encontrados:", propietarios);
 
-                if (!respuesta.ok) {
-                    throw new Error("Error al buscar propietarios.");
-                }
+            propietarios.forEach(propietario => {
 
-                const propietarios = await respuesta.json();
+                const opcion = document.createElement("button");
 
-                console.log("Propietarios encontrados:", propietarios);
+                opcion.type = "button";
+                opcion.className =
+                    "list-group-item list-group-item-action";
 
-                propietarios.forEach(propietario => {
-
-                    const opcion = document.createElement("button");
-
-                    opcion.type = "button";
-                    opcion.className =
-                        "list-group-item list-group-item-action";
-
-                    opcion.innerHTML = `
+                opcion.innerHTML = `
                         <strong>${propietario.nombre}</strong>
                         <br>
                         <small>DNI/CUIT: ${propietario.dniCuit}</small>
                     `;
 
-                    opcion.addEventListener("click", function () {
+                opcion.addEventListener("click", function () {
 
-                        inputPropietario.value =
-                            propietario.nombre;
+                    inputPropietario.value =
+                        propietario.nombre;
 
-                        propietarioId.value =
-                            propietario.id;
+                    propietarioId.value =
+                        propietario.id;
 
-                        resultados.innerHTML = "";
-                    });
-
-                    resultados.appendChild(opcion);
+                    resultados.innerHTML = "";
                 });
 
-            } catch (error) {
+                resultados.appendChild(opcion);
+            });
 
-                console.error("Error:", error);
-            }
-        });
-    </script>
+        } catch (error) {
+
+            console.error("Error:", error);
+        }
+    });
+</script>
