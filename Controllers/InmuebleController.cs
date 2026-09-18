@@ -105,7 +105,37 @@ public class InmuebleController : Controller
                 "Ocurrió un error al obtener los inmuebles.");
         }
     }
+    [HttpGet]
+    public IActionResult DisponiblesEntreFechas(DateTime? fechaDesde,
+    DateTime? fechaHasta)
+    {   
+        ViewBag.FechaDesde = fechaDesde;
+        ViewBag.FechaHasta = fechaHasta;
+    
+        if (!fechaDesde.HasValue || !fechaHasta.HasValue)
+        {
+        ViewBag.Error = "Debés seleccionar las dos fechas.";
+        return View(new List<Inmueble>());
+    }
 
+    if (fechaDesde.Value >= fechaHasta.Value)
+    {
+        ViewBag.Error =
+            "La fecha desde debe ser anterior a la fecha hasta.";
+
+        return View(new List<Inmueble>());
+    }
+
+    var lista = repoInmueble.InmueblesEntreFechas(
+        fechaDesde.Value,
+        fechaHasta.Value);
+
+    ViewBag.FechaDesde = fechaDesde.Value;
+    ViewBag.FechaHasta = fechaHasta.Value;
+    ViewBag.BusquedaRealizada = true;
+
+    return View(lista);
+    }
     // CREAR - GET
     [HttpGet]
     public IActionResult Crear()

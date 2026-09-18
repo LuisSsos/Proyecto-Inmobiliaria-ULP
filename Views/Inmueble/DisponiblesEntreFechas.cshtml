@@ -1,0 +1,117 @@
+@model IEnumerable<MVC.Models.Inmueble>
+
+@{
+    ViewData["Title"] = "Inmuebles disponibles";
+}
+
+<h2>Inmuebles disponibles entre fechas</h2>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">
+        Volver al listado
+    </a>
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+<form asp-action="DisponiblesEntreFechas"
+      method="get"
+      class="mb-4">
+
+    <div class="row align-items-end">
+
+        <div class="col-md-4">
+            <label for="fechaDesde" class="form-label">
+                Fecha desde
+            </label>
+
+            <input type="date"
+                   id="fechaDesde"
+                   name="fechaDesde"
+                   value="@(ViewBag.FechaDesde?.ToString("yyyy-MM-dd"))"
+                   class="form-control"
+                   required />
+        </div>
+
+        <div class="col-md-4">
+            <label for="fechaHasta" class="form-label">
+                Fecha hasta
+            </label>
+
+            <input type="date"
+                   id="fechaHasta"
+                   name="fechaHasta"
+                   value="@(ViewBag.FechaHasta?.ToString("yyyy-MM-dd"))"
+                   class="form-control"
+                   required />
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">
+                Buscar disponibles
+            </button>
+        </div>
+
+    </div>
+</form>
+
+@if (ViewBag.BusquedaRealizada == true)
+{
+    @if (Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dirección</th>
+                    <th>Tipo</th>
+                    <th>Cupo</th>
+                    <th>Precio por día</th>
+                    <th>Propietario</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var inmueble in Model)
+                {
+                    <tr>
+                        <td>@inmueble.Direccion</td>
+
+                        <td>
+                            @(inmueble.Tipo?.Nombre ?? "Sin especificar")
+                        </td>
+
+                        <td>@inmueble.Cupo</td>
+
+                        <td>
+                            @inmueble.PrecioPorDia.ToString("C")
+                        </td>
+
+                        <td>
+                            @(inmueble.Titular?.Nombre ?? "Sin propietario")
+                        </td>
+
+                        <td>
+                            <a asp-controller="Reserva"
+                               asp-action="Crear"
+                               asp-route-inmuebleId="@inmueble.IdInmueble">
+                                Reservar
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No se encontraron inmuebles disponibles para esas fechas.
+        </div>
+    }
+}

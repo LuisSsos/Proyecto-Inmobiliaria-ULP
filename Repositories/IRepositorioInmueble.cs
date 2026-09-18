@@ -17,4 +17,5 @@ public interface IRepositorioInmueble
     int ContarInmuebles( string? estado, int? propietarioId);
     IList<Inmueble> ObtenerMasReservados(int dias, int pagina, int cantidadPorPagina);
     int ContarMasReservados(int dias);
+    IList<Inmueble> InmueblesEntreFechas(DateTime fechaDesde, DateTime fechaHasta);
 }
